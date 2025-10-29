@@ -1,0 +1,59 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+Built-By: luc
+Build-Jdk: 1.6.0_20
+Implementation-Title: Commons Math
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache
+Implementation-Version: 2.2
+Specification-Title: Commons Math
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: 2.2
+X-Compile-Source-JDK: 1.5
+X-Compile-Target-JDK: 1.5
+Export-Package: org.apache.commons.math.analysis.interpolation;version
+ ="2.2",org.apache.commons.math.dfp;version="2.2",org.apache.commons.m
+ ath.special;version="2.2",org.apache.commons.math.util;version="2.2",
+ org.apache.commons.math.analysis;version="2.2",org.apache.commons.mat
+ h.stat.descriptive;version="2.2",org.apache.commons.math.stat.regress
+ ion;version="2.2",org.apache.commons.math.stat.correlation;version="2
+ .2",org.apache.commons.math.stat.clustering;version="2.2",org.apache.
+ commons.math.ode.jacobians;version="2.2",org.apache.commons.math.stat
+ .ranking;version="2.2",org.apache.commons.math;version="2.2",org.apac
+ he.commons.math.ode.sampling;version="2.2",org.apache.commons.math.ge
+ netics;version="2.2",org.apache.commons.math.analysis.polynomials;ver
+ sion="2.2",org.apache.commons.math.exception.util;version="2.2",org.a
+ pache.commons.math.optimization.linear;version="2.2",org.apache.commo
+ ns.math.ode.nonstiff;version="2.2",org.apache.commons.math.optimizati
+ on.univariate;version="2.2",org.apache.commons.math.optimization.dire
+ ct;version="2.2",org.apache.commons.math.optimization.general;version
+ ="2.2",org.apache.commons.math.stat;version="2.2",org.apache.commons.
+ math.distribution;version="2.2",org.apache.commons.math.ode.events;ve
+ rsion="2.2",org.apache.commons.math.stat.descriptive.summary;version=
+ "2.2",org.apache.commons.math.geometry;version="2.2",org.apache.commo
+ ns.math.linear;version="2.2",org.apache.commons.math.estimation;versi
+ on="2.2",org.apache.commons.math.analysis.integration;version="2.2",o
+ rg.apache.commons.math.stat.descriptive.rank;version="2.2",org.apache
+ .commons.math.random;version="2.2",org.apache.commons.math.fraction;v
+ ersion="2.2",org.apache.commons.math.complex;version="2.2",org.apache
+ .commons.math.transform;version="2.2",org.apache.commons.math.stat.in
+ ference;version="2.2",org.apache.commons.math.optimization.fitting;ve
+ rsion="2.2",org.apache.commons.math.exception;version="2.2",org.apach
+ e.commons.math.optimization;version="2.2",org.apache.commons.math.ode
+ ;version="2.2",org.apache.commons.math.stat.descriptive.moment;versio
+ n="2.2",org.apache.commons.math.analysis.solvers;version="2.2"
+Tool: Bnd-0.0.255
+Bundle-Name: Commons Math
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.2
+Bnd-LastModified: 1298744197267
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-Description: The Math project is a library of lightweight, self
+ -contained mathematics and statistics components addressing the most 
+ common practical problems not immediately available in the Java progr
+ amming language or commons-lang.
+Bundle-SymbolicName: org.apache.commons.math
+Bundle-DocURL: http://commons.apache.org/math/
+
