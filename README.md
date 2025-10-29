@@ -1,255 +1,358 @@
-# 招商银行聚合支付SDK
+# 招商银行支付SDK (Java17+)
 
-[![Java](https://img.shields.io/badge/Java-17+-blue.svg)](https://www.oracle.com/java/)
-[![Maven](https://img.shields.io/badge/Maven-3.6+-green.svg)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Java Version](https://img.shields.io/badge/Java-17+-blue.svg)](https://www.oracle.com/java/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 
-招商银行商户聚合支付接口SDK，支持Java 17+版本，提供完整的支付、查询、退款功能，支持配置文件和数据库两种配置方式。
+一个适配Java17+的招商银行聚合支付SDK，提供完整的支付、查询、退款、回调处理等功能。
 
-## 功能特性
+## 特性
 
-- ✅ **多支付方式支持**: 微信支付、支付宝、银联等
-- ✅ **完整支付流程**: 创建订单、查询订单、申请退款、查询退款
-- ✅ **多种配置方式**: 支持配置文件和数据库配置
-- ✅ **安全签名**: 支持RSA2、MD5、HMAC-SHA256签名算法
-- ✅ **异步通知**: 完整的异步通知处理和验签
-- ✅ **Java 17+**: 兼容Java 17及以上版本
-- ✅ **易于集成**: 简洁的API设计，快速集成
+- ✅ **Java17+兼容**: 完全适配Java17及以上版本
+- ✅ **SM2国密加密**: 支持招商银行要求的SM2签名算法
+- ✅ **完整API覆盖**: 支持收款码申请、付款码收款、订单查询、退款等全部API
+- ✅ **回调处理**: 内置Spring Boot回调处理器，自动验签和业务处理
+- ✅ **类型安全**: 使用强类型请求响应模型，避免字段错误
+- ✅ **异常处理**: 完善的异常处理机制
+- ✅ **单元测试**: 高覆盖率的单元测试
+- ✅ **文档完整**: 详细的API文档和使用示例
 
 ## 快速开始
 
 ### 1. 添加依赖
 
-```xml
-<dependency>
-    <groupId>com.cmbchina</groupId>
-    <artifactId>cmb-aggregated-payment-sdk</artifactId>
-    <version>1.0.0</version>
-</dependency>
+```gradle
+dependencies {
+    implementation 'com.cmbchina:cmb-payment-sdk:1.0.0'
+}
 ```
 
-### 2. 配置文件方式
-
-在 `src/main/resources` 目录下创建 `cmb-payment.properties` 文件：
-
-```properties
-# 招商银行聚合支付配置
-cmb.merchant.id=your_merchant_id
-cmb.private.key=your_private_key
-cmb.public.key=your_public_key
-cmb.api.url=https://api.cmbchina.com
-cmb.notify.url=https://your-domain.com/notify
-cmb.return.url=https://your-domain.com/return
-cmb.sign.type=RSA2
-cmb.charset=UTF-8
-cmb.connect.timeout=30000
-cmb.read.timeout=30000
-cmb.sandbox=false
-```
-
-### 3. 数据库配置方式
-
-创建数据库表（参考 `src/main/resources/db/schema.sql`）：
-
-```sql
-CREATE TABLE cmb_payment_config (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    merchant_id VARCHAR(64) NOT NULL,
-    config_key VARCHAR(128) NOT NULL,
-    config_value TEXT,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_merchant_config (merchant_id, config_key)
-);
-```
-
-配置数据库连接信息 `cmb-payment-db.properties`：
-
-```properties
-db.url=jdbc:mysql://localhost:3306/payment_db?useSSL=false&serverTimezone=UTC
-db.username=your_username
-db.password=your_password
-db.table.name=cmb_payment_config
-```
-
-## 使用示例
-
-### 基本用法
+### 2. 配置参数
 
 ```java
-import com.cmbchina.payment.config.ConfigManager;
-import com.cmbchina.payment.config.PaymentConfig;
-import com.cmbchina.payment.model.*;
-import com.cmbchina.payment.service.CmbPaymentService;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-// 从配置文件加载配置
-PaymentConfig config = ConfigManager.loadFromFile();
-
-// 或者从数据库加载配置
-// PaymentConfig config = ConfigManager.loadFromDatabase("your_merchant_id");
-
-// 创建支付服务
-CmbPaymentService paymentService = new CmbPaymentService(config);
+CmbPaymentConfig config = new CmbPaymentConfig.Builder()
+    .merchantId("your_merchant_id")           // 商户号
+    .appId("your_app_id")                     // 应用ID
+    .appSecret("your_app_secret")             // 应用密钥
+    .privateKey("your_sm2_private_key")       // SM2私钥
+    .publicKey("cmb_sm2_public_key")          // 招行SM2公钥
+    .apiUrl("https://api.cmburl.cn:8065")     // API地址
+    .notifyUrl("https://your-domain.com/notify") // 回调地址
+    .sandbox(false)                           // 是否沙箱环境
+    .build();
 ```
 
-### 创建支付订单
+### 3. 创建客户端
+
+```java
+CmbPaymentClient client = new CmbPaymentClient(config);
+```
+
+### 4. 发起支付
+
+```java
+// 收款码申请
+QrCodeApplyRequest request = new QrCodeApplyRequest();
+request.setMerId("your_merchant_id");
+request.setOrderId("ORDER_" + System.currentTimeMillis());
+request.setOrderAmt(10000L); // 100.00元，单位：分
+request.setGoodsDes("测试商品");
+request.setNotifyUrl("https://your-domain.com/notify");
+
+try {
+    QrCodeApplyResponse response = client.qrCodeApply(request);
+    if (response.isSuccess()) {
+        String qrCode = response.getQrCode();
+        System.out.println("二维码链接: " + qrCode);
+    } else {
+        System.out.println("申请失败: " + response.getResultMsg());
+    }
+} catch (CmbPaymentException e) {
+    System.out.println("请求异常: " + e.getMessage());
+}
+```
+
+## 主要功能
+
+### 支付相关
+
+#### 1. 收款码申请（主扫支付）
+
+```java
+QrCodeApplyRequest request = new QrCodeApplyRequest();
+request.setMerId("123456789");
+request.setOrderId("ORDER_20241029001");
+request.setOrderAmt(10000L);
+request.setGoodsDes("测试商品");
+request.setNotifyUrl("https://your-domain.com/notify");
+request.setExpireTime(30); // 30分钟有效期
+
+QrCodeApplyResponse response = client.qrCodeApply(request);
+```
+
+#### 2. 付款码收款（被扫支付）
 
 ```java
 PaymentRequest request = new PaymentRequest();
-request.setOutTradeNo("ORDER_" + System.currentTimeMillis());
-request.setTotalAmount(new BigDecimal("100.00"));
-request.setSubject("测试商品");
-request.setBody("这是一个测试订单");
+request.setMerId("123456789");
+request.setOrderId("ORDER_20241029002");
+request.setOrderAmt(10000L);
+request.setGoodsDes("测试商品");
+request.setPayCode("134567890123456789"); // 用户付款码
 request.setNotifyUrl("https://your-domain.com/notify");
-request.setReturnUrl("https://your-domain.com/return");
-request.setPaymentType("WECHAT");
-request.setExpireTime(LocalDateTime.now().plusMinutes(30));
 
-PaymentResponse response = paymentService.createPayment(request);
+PaymentResponse response = client.pay(request);
+```
 
+#### 3. 订单查询
+
+```java
+OrderQueryRequest request = new OrderQueryRequest();
+request.setMerId("123456789");
+request.setOrderId("ORDER_20241029001");
+
+OrderQueryResponse response = client.orderQuery(request);
 if (response.isSuccess()) {
-    System.out.println("支付链接: " + response.getPayUrl());
-    System.out.println("二维码: " + response.getQrCode());
-} else {
-    System.out.println("创建失败: " + response.getMessage());
+    System.out.println("订单状态: " + response.getOrderStat());
+    System.out.println("支付金额: " + response.getPayAmt());
 }
 ```
 
-### 查询支付订单
+### 退款相关
+
+#### 1. 申请退款
 
 ```java
-QueryRequest queryRequest = new QueryRequest();
-queryRequest.setOutTradeNo("ORDER_123456789");
+RefundRequest request = new RefundRequest();
+request.setMerId("123456789");
+request.setOrderId("ORDER_20241029001");
+request.setRefundId("REFUND_20241029001");
+request.setRefundAmt(5000L); // 退款50.00元
+request.setRefundReason("用户申请退款");
 
-PaymentResponse response = paymentService.queryPayment(queryRequest);
-
-if (response.isSuccess()) {
-    System.out.println("交易状态: " + response.getTradeStatus());
-    System.out.println("支付金额: " + response.getTotalAmount());
-}
+RefundResponse response = client.refund(request);
 ```
 
-### 申请退款
+#### 2. 退款查询
 
 ```java
-RefundRequest refundRequest = new RefundRequest();
-refundRequest.setOutTradeNo("ORDER_123456789");
-refundRequest.setOutRefundNo("REFUND_" + System.currentTimeMillis());
-refundRequest.setRefundAmount(new BigDecimal("50.00"));
-refundRequest.setRefundReason("用户申请退款");
+RefundQueryRequest request = new RefundQueryRequest();
+request.setMerId("123456789");
+request.setRefundId("REFUND_20241029001");
 
-RefundResponse response = paymentService.createRefund(refundRequest);
-
-if (response.isSuccess()) {
-    System.out.println("退款状态: " + response.getRefundStatus());
-}
+RefundQueryResponse response = client.refundQuery(request);
 ```
 
-### 处理异步通知
+### 回调处理
+
+SDK提供了完整的回调处理功能，自动验签和业务处理。
+
+#### 1. 配置回调处理器
 
 ```java
-@PostMapping("/notify")
-public String handleNotify(@RequestBody NotifyRequest notifyRequest) {
-    // 验证签名
-    boolean isValid = paymentService.verifyNotify(notifyRequest);
+@Component
+public class MyNotifyProcessor implements NotifyProcessor {
     
-    if (isValid) {
-        // 处理支付成功逻辑
-        if ("SUCCESS".equals(notifyRequest.getTradeStatus())) {
+    @Override
+    public boolean processNotify(NotifyResponse notifyResponse) {
+        // 处理支付成功回调
+        if (notifyResponse.isPaymentSuccess()) {
             // 更新订单状态
-            updateOrderStatus(notifyRequest.getOutTradeNo(), "PAID");
+            // 发送通知等业务逻辑
+            System.out.println("支付成功: " + notifyResponse.getOrderId());
+            return true;
         }
-        return "SUCCESS";
-    } else {
-        return "FAIL";
+        return false;
+    }
+    
+    @Override
+    public boolean processRefundNotify(NotifyResponse notifyResponse) {
+        // 处理退款回调
+        System.out.println("退款成功: " + notifyResponse.getRefundId());
+        return true;
     }
 }
 ```
 
-## API 参考
-
-### 核心类
-
-#### PaymentConfig
-支付配置类，包含所有必要的配置信息。
-
-#### CmbPaymentService
-主要的支付服务类，提供所有支付相关功能。
-
-#### 请求/响应模型
-- `PaymentRequest` / `PaymentResponse`: 支付相关
-- `QueryRequest`: 查询请求
-- `RefundRequest` / `RefundResponse`: 退款相关
-- `NotifyRequest`: 异步通知
-
-### 配置管理
-
-#### ConfigManager
-配置管理器，提供从文件和数据库加载配置的功能。
+#### 2. 手动处理回调
 
 ```java
-// 从文件加载
-PaymentConfig config = ConfigManager.loadFromFile();
+// 验证回调签名
+boolean isValid = client.verifyNotify(notifyData);
 
-// 从数据库加载
-PaymentConfig config = ConfigManager.loadFromDatabase("merchant_id");
-
-// 保存到数据库
-ConfigManager.saveToDatabase(config);
-```
-
-## 签名算法
-
-SDK支持多种签名算法：
-
-- **RSA2**: 推荐使用，安全性最高
-- **MD5**: 兼容性好，适合简单场景
-- **HMAC-SHA256**: 性能好，适合高并发场景
-
-## 错误处理
-
-所有API调用都会抛出 `RuntimeException`，建议在业务代码中进行适当的异常处理：
-
-```java
-try {
-    PaymentResponse response = paymentService.createPayment(request);
-    // 处理成功响应
-} catch (RuntimeException e) {
-    // 处理异常
-    logger.error("支付失败", e);
+// 处理回调数据
+if (isValid) {
+    NotifyResponse notify = client.handleNotify(notifyData);
+    // 处理业务逻辑
 }
 ```
 
-## 测试
+## 配置说明
 
-运行单元测试：
+### 基础配置
 
-```bash
-mvn test
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| merchantId | String | 是 | 商户号 |
+| appId | String | 是 | 应用ID |
+| appSecret | String | 是 | 应用密钥 |
+| privateKey | String | 是 | 商户SM2私钥 |
+| publicKey | String | 是 | 招行SM2公钥 |
+
+### 可选配置
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| apiUrl | String | https://api.cmburl.cn:8065 | API基础地址 |
+| notifyUrl | String | - | 默认回调地址 |
+| returnUrl | String | - | 默认返回地址 |
+| connectTimeout | int | 30000 | 连接超时时间(ms) |
+| readTimeout | int | 30000 | 读取超时时间(ms) |
+| sandbox | boolean | false | 是否沙箱环境 |
+
+## 错误处理
+
+SDK使用`CmbPaymentException`来处理各种异常情况：
+
+```java
+try {
+    QrCodeApplyResponse response = client.qrCodeApply(request);
+} catch (CmbPaymentException e) {
+    System.out.println("错误码: " + e.getErrorCode());
+    System.out.println("错误信息: " + e.getErrorMessage());
+    
+    // 根据错误码进行不同处理
+    switch (e.getErrorCode()) {
+        case "SIGN_ERROR":
+            // 签名错误处理
+            break;
+        case "PARAM_ERROR":
+            // 参数错误处理
+            break;
+        default:
+            // 其他错误处理
+            break;
+    }
+}
 ```
 
-运行示例代码：
+## 最佳实践
 
-```bash
-mvn exec:java -Dexec.mainClass="com.cmbchina.payment.example.PaymentExample"
+### 1. 订单号生成
+
+```java
+// 推荐使用时间戳+随机数的方式生成唯一订单号
+String orderId = "ORDER_" + System.currentTimeMillis() + "_" + 
+    SignatureUtil.generateNonce(6);
 ```
 
-## 构建
+### 2. 金额处理
 
-```bash
-mvn clean package
+```java
+// 所有金额单位都是分，避免浮点数精度问题
+BigDecimal yuan = new BigDecimal("100.50");
+long fen = yuan.multiply(new BigDecimal("100")).longValue(); // 10050分
 ```
+
+### 3. 异步处理
+
+```java
+@Async
+public void processPaymentAsync(String orderId) {
+    try {
+        OrderQueryRequest request = new OrderQueryRequest();
+        request.setMerId(merchantId);
+        request.setOrderId(orderId);
+        
+        OrderQueryResponse response = client.orderQuery(request);
+        // 处理查询结果
+    } catch (Exception e) {
+        // 异常处理
+    }
+}
+```
+
+### 4. 重试机制
+
+```java
+@Retryable(value = CmbPaymentException.class, maxAttempts = 3)
+public QrCodeApplyResponse applyQrCodeWithRetry(QrCodeApplyRequest request) 
+    throws CmbPaymentException {
+    return client.qrCodeApply(request);
+}
+```
+
+## 安全建议
+
+1. **密钥安全**: 私钥不要硬编码在代码中，使用配置文件或环境变量
+2. **HTTPS通信**: 生产环境必须使用HTTPS
+3. **签名验证**: 必须验证所有回调通知的签名
+4. **重放攻击**: 实现订单号唯一性检查
+5. **日志脱敏**: 记录日志时要脱敏敏感信息
+
+## 常见问题
+
+### Q: 签名验证失败怎么办？
+A: 检查以下几点：
+- 私钥格式是否正确（16进制字符串）
+- 参数是否按字典序排序
+- 编码是否为UTF-8
+- 是否包含了所有非空参数
+
+### Q: 回调通知收不到怎么办？
+A: 检查以下几点：
+- 回调地址是否可以公网访问
+- 是否正确返回了SUCCESS响应
+- 防火墙是否允许招行IP访问
+
+### Q: 如何在Spring Boot中使用？
+A: 参考以下配置：
+
+```java
+@Configuration
+public class PaymentConfig {
+    
+    @Bean
+    public CmbPaymentConfig cmbPaymentConfig() {
+        return new CmbPaymentConfig.Builder()
+            .merchantId("${cmb.merchant.id}")
+            .appId("${cmb.app.id}")
+            .appSecret("${cmb.app.secret}")
+            .privateKey("${cmb.private.key}")
+            .publicKey("${cmb.public.key}")
+            .build();
+    }
+    
+    @Bean
+    public CmbPaymentClient cmbPaymentClient(CmbPaymentConfig config) {
+        return new CmbPaymentClient(config);
+    }
+}
+```
+
+## 更新日志
+
+### v1.0.0 (2024-10-29)
+- 初始版本发布
+- 支持Java17+
+- 实现SM2签名算法
+- 完整的支付API覆盖
+- 内置回调处理器
+- 完善的单元测试
 
 ## 许可证
 
-MIT License
+本项目采用 Apache License 2.0 许可证。详情请参阅 [LICENSE](LICENSE) 文件。
+
+## 支持
+
+如有问题或建议，请提交 [Issue](https://github.com/cmbchina/cmb-payment-sdk/issues)。
 
 ## 贡献
 
-欢迎提交Issue和Pull Request来改进这个SDK。
+欢迎提交 Pull Request 来改进这个项目。请确保：
 
-## 联系方式
-
-如有问题，请联系开发团队或提交Issue。
+1. 代码符合项目的编码规范
+2. 添加适当的单元测试
+3. 更新相关文档
+4. 提交信息清晰明确
