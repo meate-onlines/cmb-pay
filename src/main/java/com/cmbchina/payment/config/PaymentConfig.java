@@ -13,22 +13,25 @@ public class PaymentConfig {
     private String apiUrl;
     private String notifyUrl;
     private String returnUrl;
-    private String signType;
-    private String charset;
-    private int connectTimeout;
-    private int readTimeout;
-    private boolean debug;
+    private String signType = "RSA2";
+    private String charset = "UTF-8";
+    private int connectTimeout = 30000;
+    private int readTimeout = 30000;
+    private boolean sandbox = false;
     
     // 构造函数
-    public PaymentConfig() {
-        this.charset = "UTF-8";
-        this.signType = "RSA2";
-        this.connectTimeout = 30000;
-        this.readTimeout = 60000;
-        this.debug = false;
+    public PaymentConfig() {}
+    
+    public PaymentConfig(String merchantId, String privateKey, String publicKey, String apiUrl) {
+        this.merchantId = merchantId;
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
+        this.apiUrl = apiUrl;
     }
     
-    // 从Properties创建配置
+    /**
+     * 从Properties加载配置
+     */
     public static PaymentConfig fromProperties(Properties props) {
         PaymentConfig config = new PaymentConfig();
         config.setMerchantId(props.getProperty("cmb.merchant.id"));
@@ -40,8 +43,8 @@ public class PaymentConfig {
         config.setSignType(props.getProperty("cmb.sign.type", "RSA2"));
         config.setCharset(props.getProperty("cmb.charset", "UTF-8"));
         config.setConnectTimeout(Integer.parseInt(props.getProperty("cmb.connect.timeout", "30000")));
-        config.setReadTimeout(Integer.parseInt(props.getProperty("cmb.read.timeout", "60000")));
-        config.setDebug(Boolean.parseBoolean(props.getProperty("cmb.debug", "false")));
+        config.setReadTimeout(Integer.parseInt(props.getProperty("cmb.read.timeout", "30000")));
+        config.setSandbox(Boolean.parseBoolean(props.getProperty("cmb.sandbox", "false")));
         return config;
     }
     
@@ -126,21 +129,11 @@ public class PaymentConfig {
         this.readTimeout = readTimeout;
     }
     
-    public boolean isDebug() {
-        return debug;
+    public boolean isSandbox() {
+        return sandbox;
     }
     
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-    
-    /**
-     * 验证配置是否完整
-     */
-    public boolean isValid() {
-        return merchantId != null && !merchantId.trim().isEmpty()
-            && privateKey != null && !privateKey.trim().isEmpty()
-            && publicKey != null && !publicKey.trim().isEmpty()
-            && apiUrl != null && !apiUrl.trim().isEmpty();
+    public void setSandbox(boolean sandbox) {
+        this.sandbox = sandbox;
     }
 }
