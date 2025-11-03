@@ -11,10 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -155,6 +154,7 @@ public class CmbPaymentService {
             
             // 生成签名
             String requestJson = objectMapper.writeValueAsString(request);
+            @SuppressWarnings("unchecked")
             Map<String, String> requestMap = objectMapper.readValue(requestJson, Map.class);
             requestMap.remove("sign"); // 移除sign字段
             
@@ -203,12 +203,10 @@ public class CmbPaymentService {
      * 创建RestTemplate
      */
     private RestTemplate createRestTemplate() {
-        RestTemplate template = new RestTemplate();
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(config.getConnectTimeout());
+        factory.setReadTimeout(config.getReadTimeout());
         
-        // 设置超时时间
-        template.getRequestFactory().setConnectTimeout(Duration.ofMillis(config.getConnectTimeout()));
-        template.getRequestFactory().setReadTimeout(Duration.ofMillis(config.getReadTimeout()));
-        
-        return template;
+        return new RestTemplate(factory);
     }
 }

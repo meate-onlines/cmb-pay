@@ -9,6 +9,14 @@ sourceCompatibility = '17'
 targetCompatibility = '17'
 
 repositories {
+    // 优先使用阿里云镜像（国内访问更快）
+    maven { 
+        url 'https://maven.aliyun.com/repository/public'
+    }
+    maven { 
+        url 'https://maven.aliyun.com/repository/central'
+    }
+    // 备用：Maven Central
     mavenCentral()
 }
 
@@ -47,6 +55,19 @@ test {
     useJUnitPlatform()
 }
 
+// 配置 Java 编译和 Javadoc 使用 UTF-8 编码
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    // 忽略编码警告
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
 java {
     withSourcesJar()
     withJavadocJar()
@@ -57,10 +78,14 @@ publishing {
         maven(MavenPublication) {
             from components.java
             
+            groupId = 'com.github.meate-onlines'
+            artifactId = 'cmb-payment-sdk'
+            version = '1.0.0'
+            
             pom {
                 name = 'CMB Payment SDK'
                 description = 'Java SDK for China Merchants Bank Payment API'
-                url = 'https://github.com/cmbchina/cmb-payment-sdk'
+                url = 'https://github.com/meate-onlines/cmb-pay'
                 
                 licenses {
                     license {
@@ -71,12 +96,42 @@ publishing {
                 
                 developers {
                     developer {
-                        id = 'cmb-dev'
-                        name = 'CMB Development Team'
-                        email = 'dev@cmbchina.com'
+                        id = 'liuguang-dev'
+                        name = 'liuguang Development Team'
+                        email = '984532468@qq.com'
                     }
+                }
+                
+                scm {
+                    connection = 'scm:git:git://github.com/meate-onlines/cmb-pay.git'
+                    developerConnection = 'scm:git:ssh://github.com:meate-onlines/cmb-pay.git'
+                    url = 'https://github.com/meate-onlines/cmb-pay'
                 }
             }
         }
+    }
+    
+    // 发布到本地 Maven 仓库
+    repositories {
+        mavenLocal()
+        
+        // 发布到 GitHub Packages (可选)
+        // maven {
+        //     name = "GitHubPackages"
+        //     url = uri("https://maven.pkg.github.com/meate-onlines/cmb-pay")
+        //     credentials {
+        //         username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+        //         password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+        //     }
+        // }
+        
+        // 发布到 Maven Central (可选)
+        // maven {
+        //     url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        //     credentials {
+        //         username = ossrhUsername
+        //         password = ossrhPassword
+        //     }
+        // }
     }
 }

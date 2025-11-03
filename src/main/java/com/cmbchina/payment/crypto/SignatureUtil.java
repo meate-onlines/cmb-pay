@@ -112,7 +112,7 @@ public class SignatureUtil {
     /**
      * 将查询字符串转换为Map
      * 
-     * @param queryString 查询字符串（如：key1=value1&key2=value2）
+     * @param queryString 查询字符串（如：key1=value1&amp;key2=value2）
      * @return 参数Map
      */
     public static Map<String, String> parseQueryString(String queryString) {

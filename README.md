@@ -30,7 +30,7 @@ dependencies {
 #### Maven
 ```xml
 <dependency>
-    <groupId>com.cmbchina</groupId>
+    <groupId>com.github.meate-onlines</groupId>
     <artifactId>cmb-payment-sdk</artifactId>
     <version>1.0.0</version>
 </dependency>

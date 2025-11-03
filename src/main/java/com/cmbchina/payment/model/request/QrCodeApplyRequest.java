@@ -35,7 +35,7 @@ public class QrCodeApplyRequest extends BaseRequest {
     @NotNull(message = "订单金额不能为空")
     @Positive(message = "订单金额必须大于0")
     @JsonProperty("order_amt")
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 商品描述
@@ -102,11 +102,11 @@ public class QrCodeApplyRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     

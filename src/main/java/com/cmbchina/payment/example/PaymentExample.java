@@ -57,7 +57,7 @@ public class PaymentExample {
         QrCodeApplyRequest request = new QrCodeApplyRequest();
         request.setMerId("your_merchant_id");
         request.setOrderId("ORDER_" + System.currentTimeMillis());
-        request.setOrderAmt(10000L); // 100.00元，单位：分
+        request.setOrderAmt("10000"); // 100.00元，单位：分
         request.setGoodsDes("测试商品");
         request.setNotifyUrl("https://your-domain.com/notify");
         request.setReturnUrl("https://your-domain.com/return");

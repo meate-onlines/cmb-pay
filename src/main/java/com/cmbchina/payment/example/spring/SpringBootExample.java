@@ -1,7 +1,6 @@
 package com.cmbchina.payment.example.spring;
 
 import com.cmbchina.payment.CmbPaymentClient;
-import com.cmbchina.payment.config.CmbPaymentConfig;
 import com.cmbchina.payment.exception.CmbPaymentException;
 import com.cmbchina.payment.model.request.*;
 import com.cmbchina.payment.model.response.*;
@@ -22,7 +21,7 @@ import java.util.Map;
  * @since 2024-10-29
  */
 @Configuration
-class CmbPaymentConfig {
+class CmbPaymentConfiguration {
     
     @Value("${cmb.merchant.id}")
     private String merchantId;

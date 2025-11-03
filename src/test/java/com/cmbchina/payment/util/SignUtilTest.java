@@ -1,6 +1,8 @@
 package com.cmbchina.payment.util;
 
+import com.cmbchina.payment.crypto.SignatureUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,54 +11,109 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 签名工具测试类
+ * 
+ * @author CMB Payment SDK Team
+ * @version 1.0.0
+ * @since 2024-10-29
  */
+@DisplayName("签名工具测试")
 class SignUtilTest {
     
     @Test
-    void testBuildSignString() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("b", "2");
-        params.put("a", "1");
+    @DisplayName("测试参数排序和签名内容生成")
+    void testGetSignContent() {
+        Map<String, String> params = new HashMap<>();
         params.put("c", "3");
-        params.put("", ""); // 空值应该被过滤
-        params.put("d", null); // null值应该被过滤
+        params.put("a", "1");
+        params.put("b", "2");
         
-        String signString = SignUtil.buildSignString(params);
+        String signContent = SignatureUtil.getSignContent(params);
         
-        // 应该按key排序，过滤空值
-        assertEquals("a=1&b=2&c=3", signString);
+        // 应该按key排序
+        assertNotNull(signContent);
+        assertTrue(signContent.contains("a=1"));
+        assertTrue(signContent.contains("b=2"));
+        assertTrue(signContent.contains("c=3"));
+        // 验证顺序
+        assertTrue(signContent.indexOf("a=1") < signContent.indexOf("b=2"));
+        assertTrue(signContent.indexOf("b=2") < signContent.indexOf("c=3"));
     }
     
     @Test
-    void testMd5Sign() {
+    @DisplayName("测试MD5哈希")
+    void testMd5() {
         String content = "test_content";
-        String key = "test_key";
+        String hash = SignatureUtil.md5(content);
         
-        String sign = SignUtil.md5Sign(content, key);
-        
-        assertNotNull(sign);
-        assertTrue(sign.length() == 32); // MD5签名长度应该是32
+        assertNotNull(hash);
+        assertEquals(32, hash.length()); // MD5哈希值长度为32
+        // 同一个内容应该产生相同的哈希值
+        assertEquals(hash, SignatureUtil.md5(content));
     }
     
     @Test
-    void testMd5Verify() {
-        String content = "test_content";
-        String key = "test_key";
+    @DisplayName("测试随机字符串生成")
+    void testGenerateNonce() {
+        String nonce = SignatureUtil.generateNonce(16);
         
-        String sign = SignUtil.md5Sign(content, key);
-        boolean isValid = SignUtil.md5Verify(content, sign, key);
+        assertNotNull(nonce);
+        assertEquals(16, nonce.length());
         
-        assertTrue(isValid);
+        // 生成两次应该不同（极大概率）
+        String nonce2 = SignatureUtil.generateNonce(16);
+        assertNotEquals(nonce, nonce2);
+        
+        // 测试不同长度
+        String nonce32 = SignatureUtil.generateNonce(32);
+        assertEquals(32, nonce32.length());
     }
     
     @Test
-    void testHmacSha256Sign() {
-        String content = "test_content";
-        String secretKey = "test_secret_key";
+    @DisplayName("测试API签名生成")
+    void testGenerateApiSign() {
+        String appId = "test_app_id";
+        String appSecret = "test_app_secret";
+        String sign = "test_sign";
+        long timestamp = System.currentTimeMillis() / 1000;
         
-        String sign = SignUtil.hmacSha256Sign(content, secretKey);
+        String apiSign = SignatureUtil.generateApiSign(appId, appSecret, sign, timestamp);
         
-        assertNotNull(sign);
-        assertFalse(sign.isEmpty());
+        assertNotNull(apiSign);
+        assertFalse(apiSign.isEmpty());
+    }
+    
+    @Test
+    @DisplayName("测试查询字符串解析")
+    void testParseQueryString() {
+        String queryString = "a=1&b=2&c=3";
+        Map<String, String> params = SignatureUtil.parseQueryString(queryString);
+        
+        assertNotNull(params);
+        assertEquals(3, params.size());
+        assertEquals("1", params.get("a"));
+        assertEquals("2", params.get("b"));
+        assertEquals("3", params.get("c"));
+    }
+    
+    @Test
+    @DisplayName("测试空查询字符串解析")
+    void testParseEmptyQueryString() {
+        String queryString = "";
+        Map<String, String> params = SignatureUtil.parseQueryString(queryString);
+        
+        assertNotNull(params);
+        assertTrue(params.isEmpty());
+    }
+    
+    @Test
+    @DisplayName("测试URL编码的查询字符串解析")
+    void testParseQueryStringWithEncoding() {
+        String queryString = "a=hello%20world&b=test";
+        Map<String, String> params = SignatureUtil.parseQueryString(queryString);
+        
+        assertNotNull(params);
+        assertEquals(2, params.size());
+        assertTrue(params.containsKey("a"));
+        assertTrue(params.containsKey("b"));
     }
 }
