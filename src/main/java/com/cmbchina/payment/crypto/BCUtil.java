@@ -1,187 +1,160 @@
 package com.cmbchina.payment.crypto;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.bouncycastle.jcajce.spec.SM2ParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.jce.spec.ECPrivateKeySpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
-import org.bouncycastle.math.ec.ECPoint;
-import org.bouncycastle.crypto.digests.SM3Digest;
-import org.bouncycastle.crypto.signers.SM2Signer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.bouncycastle.util.encoders.Hex;
 
+import java.io.IOException;
 import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
+import java.util.Arrays;
 
-/**
- * BouncyCastle SM2工具类 - 适配Java17+
- * 
- * @author CMB Payment SDK Team
- * @version 1.0.0
- * @since 2024-10-29
- */
 public class BCUtil {
-    
-    private static final Logger logger = LoggerFactory.getLogger(BCUtil.class);
-    
+    private final static int RS_LEN = 32;
+    private static X9ECParameters x9ECParameters = GMNamedCurves.getByName("sm2p256v1");
+    private static ECDomainParameters ecDomainParameters = new ECDomainParameters(x9ECParameters.getCurve(),x9ECParameters.getG(),x9ECParameters.getN());
+    private static ECParameterSpec ecParameterSpec = new ECParameterSpec(x9ECParameters.getCurve(),x9ECParameters.getG(),x9ECParameters.getN());
+
     static {
-        // 添加BouncyCastle提供者
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         }
     }
-    
+
     /**
-     * 从私钥D值获取私钥对象
-     * 
-     * @param d 私钥D值
-     * @return BCECPrivateKey对象
-     * @throws Exception 异常
+     *
+     * @param msg
+     * @param userId
+     * @param privateKey
+     * @return r||s，直接拼接byte数组的rs
      */
-    public static BCECPrivateKey getPrivatekeyFromD(BigInteger d) throws Exception {
-        X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
-        ECParameterSpec ecParameterSpec = new ECParameterSpec(
-            sm2ECParameters.getCurve(), 
-            sm2ECParameters.getG(), 
-            sm2ECParameters.getN(), 
-            sm2ECParameters.getH()
-        );
-        
+    public static byte[] signSm3WithSm2(byte[] msg, byte[] userId, PrivateKey privateKey){
+        return rsAsn1ToPlainByteArray(signSm3WithSm2Asn1Rs(msg, userId, privateKey));
+    }
+
+    /**
+     *
+     * @param msg
+     * @param userId
+     * @param privateKey
+     * @return rs in <b>asn1 format</b>
+     */
+    public static byte[] signSm3WithSm2Asn1Rs(byte[] msg, byte[] userId, PrivateKey privateKey){
+        try {
+            SM2ParameterSpec parameterSpec = new SM2ParameterSpec(userId);
+            Signature signer = Signature.getInstance("SM3withSM2", "BC");
+            signer.setParameter(parameterSpec);
+            signer.initSign(privateKey, new SecureRandom());
+            signer.update(msg, 0, msg.length);
+            byte[] sig = signer.sign();
+            return sig;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     *
+     * @param msg
+     * @param userId
+     * @param rs r||s，直接拼接byte数组的rs
+     * @param publicKey
+     * @return
+     */
+    public static boolean verifySm3WithSm2(byte[] msg, byte[] userId, byte[] rs, PublicKey publicKey){
+        return verifySm3WithSm2Asn1Rs(msg, userId, rsPlainByteArrayToAsn1(rs), publicKey);
+    }
+
+    /**
+     *
+     * @param msg
+     * @param userId
+     * @param rs in <b>asn1 format</b>
+     * @param publicKey
+     * @return
+     */
+    public static boolean verifySm3WithSm2Asn1Rs(byte[] msg, byte[] userId, byte[] rs, PublicKey publicKey){
+        try {
+            SM2ParameterSpec parameterSpec = new SM2ParameterSpec(userId);
+            Signature verifier = Signature.getInstance("SM3withSM2", "BC");
+            verifier.setParameter(parameterSpec);
+            verifier.initVerify(publicKey);
+            verifier.update(msg, 0, msg.length);
+            return verifier.verify(rs);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * BC的SM3withSM2签名得到的结果的rs是asn1格式的，这个方法转化成直接拼接r||s
+     * @param rsDer rs in asn1 format
+     * @return sign result in plain byte array
+     */
+    private static byte[] rsAsn1ToPlainByteArray(byte[] rsDer){
+        ASN1Sequence seq = ASN1Sequence.getInstance(rsDer);
+        byte[] r = bigIntToFixexLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(0)).getValue());
+        byte[] s = bigIntToFixexLengthBytes(ASN1Integer.getInstance(seq.getObjectAt(1)).getValue());
+        byte[] result = new byte[RS_LEN * 2];
+        System.arraycopy(r, 0, result, 0, r.length);
+        System.arraycopy(s, 0, result, RS_LEN, s.length);
+        return result;
+    }
+
+    /**
+     * BC的SM3withSM2验签需要的rs是asn1格式的，这个方法将直接拼接r||s的字节数组转化成asn1格式
+     * @param sign in plain byte array
+     * @return rs result in asn1 format
+     */
+    private static byte[] rsPlainByteArrayToAsn1(byte[] sign){
+        if(sign.length != RS_LEN * 2) throw new RuntimeException("err rs. ");
+        BigInteger r = new BigInteger(1, Arrays.copyOfRange(sign, 0, RS_LEN));
+        BigInteger s = new BigInteger(1, Arrays.copyOfRange(sign, RS_LEN, RS_LEN * 2));
+        ASN1EncodableVector v = new ASN1EncodableVector();
+        v.add(new ASN1Integer(r));
+        v.add(new ASN1Integer(s));
+        try {
+            return new DERSequence(v).getEncoded("DER");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static byte[] bigIntToFixexLengthBytes(BigInteger rOrS){
+        // for sm2p256v1, n is 00fffffffeffffffffffffffffffffffff7203df6b21c6052b53bbf40939d54123,
+        // r and s are the result of mod n, so they should be less than n and have length<=32
+        byte[] rs = rOrS.toByteArray();
+        if(rs.length == RS_LEN) return rs;
+        else if(rs.length == RS_LEN + 1 && rs[0] == 0) return Arrays.copyOfRange(rs, 1, RS_LEN + 1);
+        else if(rs.length < RS_LEN) {
+            byte[] result = new byte[RS_LEN];
+            Arrays.fill(result, (byte)0);
+            System.arraycopy(rs, 0, result, RS_LEN - rs.length, rs.length);
+            return result;
+        } else {
+            throw new RuntimeException("err rs: " + Hex.toHexString(rs));
+        }
+    }
+
+    public static BCECPrivateKey getPrivatekeyFromD(BigInteger d){
         ECPrivateKeySpec ecPrivateKeySpec = new ECPrivateKeySpec(d, ecParameterSpec);
-        KeyFactory keyFactory = KeyFactory.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
-        
-        return (BCECPrivateKey) keyFactory.generatePrivate(ecPrivateKeySpec);
+        return new BCECPrivateKey("EC", ecPrivateKeySpec, BouncyCastleProvider.CONFIGURATION);
     }
-    
-    /**
-     * 从公钥坐标获取公钥对象
-     * 
-     * @param x 公钥X坐标
-     * @param y 公钥Y坐标
-     * @return BCECPublicKey对象
-     * @throws Exception 异常
-     */
-    public static BCECPublicKey getPublickeyFromXY(BigInteger x, BigInteger y) throws Exception {
-        X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
-        ECParameterSpec ecParameterSpec = new ECParameterSpec(
-            sm2ECParameters.getCurve(), 
-            sm2ECParameters.getG(), 
-            sm2ECParameters.getN(), 
-            sm2ECParameters.getH()
-        );
-        
-        ECPoint ecPoint = sm2ECParameters.getCurve().createPoint(x, y);
-        ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
-        KeyFactory keyFactory = KeyFactory.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
-        
-        return (BCECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
-    }
-    
-    /**
-     * SM3withSM2签名
-     * 
-     * @param message 待签名消息
-     * @param userId 用户ID
-     * @param privateKey 私钥
-     * @return 签名结果
-     * @throws Exception 异常
-     */
-    public static byte[] signSm3WithSm2(byte[] message, byte[] userId, BCECPrivateKey privateKey) throws Exception {
-        try {
-            X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
-            ECDomainParameters domainParameters = new ECDomainParameters(
-                sm2ECParameters.getCurve(), 
-                sm2ECParameters.getG(), 
-                sm2ECParameters.getN(), 
-                sm2ECParameters.getH()
-            );
-            
-            ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(
-                privateKey.getD(), 
-                domainParameters
-            );
-            
-            SM2Signer signer = new SM2Signer();
-            signer.init(true, privateKeyParameters);
-            signer.update(message, 0, message.length);
-            
-            return signer.generateSignature();
-        } catch (Exception ex) {
-            logger.error("SM3withSM2签名失败", ex);
-            throw ex;
-        }
-    }
-    
-    /**
-     * SM3withSM2验签
-     * 
-     * @param message 原始消息
-     * @param userId 用户ID
-     * @param signature 签名
-     * @param publicKey 公钥
-     * @return 验签结果
-     * @throws Exception 异常
-     */
-    public static boolean verifySm3WithSm2(byte[] message, byte[] userId, byte[] signature, BCECPublicKey publicKey) throws Exception {
-        try {
-            X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
-            ECDomainParameters domainParameters = new ECDomainParameters(
-                sm2ECParameters.getCurve(), 
-                sm2ECParameters.getG(), 
-                sm2ECParameters.getN(), 
-                sm2ECParameters.getH()
-            );
-            
-            ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(
-                publicKey.getQ(), 
-                domainParameters
-            );
-            
-            SM2Signer signer = new SM2Signer();
-            signer.init(false, publicKeyParameters);
-            signer.update(message, 0, message.length);
-            
-            return signer.verifySignature(signature);
-        } catch (Exception ex) {
-            logger.error("SM3withSM2验签失败", ex);
-            throw ex;
-        }
-    }
-    
-    /**
-     * 生成SM2密钥对
-     * 
-     * @return 密钥对
-     * @throws Exception 异常
-     */
-    public static AsymmetricCipherKeyPair generateSM2KeyPair() throws Exception {
-        X9ECParameters sm2ECParameters = GMNamedCurves.getByName("sm2p256v1");
-        ECDomainParameters domainParameters = new ECDomainParameters(
-            sm2ECParameters.getCurve(), 
-            sm2ECParameters.getG(), 
-            sm2ECParameters.getN(), 
-            sm2ECParameters.getH()
-        );
-        
-        ECKeyPairGenerator keyPairGenerator = new ECKeyPairGenerator();
-        ECKeyGenerationParameters keyGenerationParams = new ECKeyGenerationParameters(
-            domainParameters, 
-            new SecureRandom()
-        );
-        keyPairGenerator.init(keyGenerationParams);
-        
-        return keyPairGenerator.generateKeyPair();
+
+    public static BCECPublicKey getPublickeyFromXY(BigInteger x, BigInteger y){
+        ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(x9ECParameters.getCurve().createPoint(x, y), ecParameterSpec);
+        return new BCECPublicKey("EC", ecPublicKeySpec, BouncyCastleProvider.CONFIGURATION);
     }
 }

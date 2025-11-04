@@ -35,10 +35,12 @@ public class SM2Util {
         try {
             // 初始化私钥
             BCECPrivateKey bcecPrivateKey = BCUtil.getPrivatekeyFromD(new BigInteger(privateKey, 16));
-            
+
+            logger.info("bcecPrivateKey: {}", bcecPrivateKey);
             // 使用SM3withSM2进行签名
             byte[] sign = BCUtil.signSm3WithSm2(content.getBytes(), USER_ID.getBytes(), bcecPrivateKey);
-            
+
+            logger.info("sign: {}", sign);
             // 将原始签名转换为ASN1格式并进行Base64编码
             return encodeBase64(signRawToAsn1(sign));
         } catch (Exception ex) {

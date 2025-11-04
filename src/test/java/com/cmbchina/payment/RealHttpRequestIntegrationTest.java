@@ -72,7 +72,7 @@ class RealHttpRequestIntegrationTest {
         }
         
         // 从环境变量或系统属性获取其他配置
-        String merchantId = "3089991727302TE";
+        String merchantId = "3089991074200KV";
         String appId = "8ab74856-8772-45c9-96db-54cb30ab9f74";
         String appSecret = "5b96f20a-011f-4254-8be8-9a5ceb2f317f";
         String privateKey = "D5F2AFA24E6BA9071B54A8C9AD735F9A1DE9C4657FA386C09B592694BC118B38";
@@ -125,13 +125,13 @@ class RealHttpRequestIntegrationTest {
         
         // 创建收款码申请请求（下单）
         QrCodeApplyRequest request = new QrCodeApplyRequest();
-        String orderId = "TEST_ORDER_" + System.currentTimeMillis(); // 使用时间戳确保唯一性
+        String orderId = "" + System.currentTimeMillis(); // 使用时间戳确保唯一性
         request.setMerId(merchantId);
-        request.setOrderId(orderId);
+        request.setOrderId("1234567891011134");
         request.setTxnAmt("100"); // 1元，单位：分
-        request.setBody("abcd" + System.currentTimeMillis());
+        request.setBody("测试中文下单");
         request.setNotifyUrl(notifyUrl);
-        request.setUserId("V080708212"); // 收银员ID（必填）
+        request.setUserId("N003363806"); // 收银员ID（必填）
         
         System.out.println("\n发送收款码申请请求（下单）...");
         System.out.println("订单号: " + orderId);
@@ -212,11 +212,11 @@ class RealHttpRequestIntegrationTest {
         }
         
         // 从环境变量或系统属性获取其他配置
-        String merchantId = getProperty("CMB_MERCHANT_ID", "cmb.merchant.id");
-        String appId = getProperty("CMB_APP_ID", "cmb.app.id");
-        String appSecret = getProperty("CMB_APP_SECRET", "cmb.app.secret");
-        String privateKey = getProperty("CMB_PRIVATE_KEY", "cmb.private.key");
-        String publicKey = getProperty("CMB_PUBLIC_KEY", "cmb.public.key");
+        String merchantId = "3089991074200KV";
+        String appId = "8ab74856-8772-45c9-96db-54cb30ab9f74";
+        String appSecret = "5b96f20a-011f-4254-8be8-9a5ceb2f317f";
+        String privateKey = "D5F2AFA24E6BA9071B54A8C9AD735F9A1DE9C4657FA386C09B592694BC118B38";
+        String publicKey = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAE6Q+fktsnY9OFP+LpSR5Udbxf5zHCFO0PmOKlFNTxDIGl8jsPbbB/9ET23NV+acSz4FEkzD74sW2iiNVHRLiKHg==";
         
         // 检查必要的配置
         if (merchantId == null || appId == null || appSecret == null || 
@@ -253,22 +253,23 @@ class RealHttpRequestIntegrationTest {
         OrderQueryRequest request = new OrderQueryRequest();
         request.setMerId(merchantId);
         
-        // 优先使用之前创建的订单号，如果没有则使用新的测试订单号
-        if (createdOrderId != null) {
-            request.setOrderId(createdOrderId);
-            System.out.println("\n查询之前创建的订单...");
-            System.out.println("订单号: " + createdOrderId);
-        } else {
-            String testOrderId = "TEST_QUERY_" + System.currentTimeMillis();
-            request.setOrderId(testOrderId);
-            System.out.println("\n查询测试订单（可能不存在）...");
-            System.out.println("订单号: " + testOrderId);
-        }
+        // // 优先使用之前创建的订单号，如果没有则使用新的测试订单号
+        // if (createdOrderId != null) {
+        //     request.setOrderId(createdOrderId);
+        //     System.out.println("\n查询之前创建的订单...");
+        //     System.out.println("订单号: " + createdOrderId);
+        // } else {
+        //     String testOrderId = "TEST_QUERY_" + System.currentTimeMillis();
+        //     request.setOrderId(testOrderId);
+        //     System.out.println("\n查询测试订单（可能不存在）...");
+        //     System.out.println("订单号: " + testOrderId);
+        // }
         
-        // 如果之前创建了平台订单号，也可以使用平台订单号查询
-        if (createdCmbOrderId != null) {
-            System.out.println("平台订单号: " + createdCmbOrderId);
-        }
+        // // 如果之前创建了平台订单号，也可以使用平台订单号查询
+        // if (createdCmbOrderId != null) {
+        //     System.out.println("平台订单号: " + createdCmbOrderId);
+        // }
+        request.setOrderId("1234567891011");
         
         System.out.println("\n请查看上面的日志输出，应该能看到：");
         System.out.println("1. HTTP REQUEST 详细信息（方法、URL、请求头、请求体）");

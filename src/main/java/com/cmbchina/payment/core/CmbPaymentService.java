@@ -159,6 +159,7 @@ public class CmbPaymentService {
             // 提取业务参数并序列化为JSON字符串
             Map<String, Object> bizContentMap = extractBizContent(request);
             String bizContentJson = objectMapper.writeValueAsString(bizContentMap);
+            logger.info("bizContentJson: {}", bizContentJson);
             request.setBizContent(bizContentJson);
             
             // 构建签名参数Map（使用小驼峰命名）
@@ -166,7 +167,9 @@ public class CmbPaymentService {
             
             // 生成签名
             String signContent = SignatureUtil.getSignContent(signMap);
+            logger.info("签名内容: {}", signContent);
             String sign = SignatureUtil.sm2Sign(signContent, config.getPrivateKey());
+            logger.info("签名: {}", sign);
             request.setSign(sign);
             
             // 生成API签名
@@ -194,12 +197,26 @@ public class CmbPaymentService {
             logger.info("发送请求到: {}", url);
             logger.debug("请求内容: {}", finalRequestJson);
             
-            ResponseEntity<T> response = restTemplate.postForEntity(url, entity, responseClass);
+            // 先接收原始响应字符串，用于验签
+            ResponseEntity<String> stringResponse = restTemplate.postForEntity(url, entity, String.class);
             
-            logger.info("响应状态: {}", response.getStatusCode());
-            logger.debug("响应内容: {}", response.getBody());
+            logger.info("响应状态: {}", stringResponse.getStatusCode());
+            String responseBodyStr = stringResponse.getBody();
+            logger.debug("响应内容: {}", responseBodyStr);
+
+            // 验证响应签名（使用原始响应体字符串）
+            boolean isValid = cheackResponseSign(responseBodyStr);
+            if (!isValid) {
+                logger.error("响应签名验证失败");
+                throw new CmbPaymentException("RESPONSE_SIGN_ERROR", "响应签名验证失败");
+            }
             
-            return response.getBody();
+            // 验签通过后，将响应体反序列化为目标类型
+            // 先解析响应JSON，提取biz_content并合并到顶层
+            String flattenedJson = flattenBizContent(responseBodyStr);
+            T response = objectMapper.readValue(flattenedJson, responseClass);
+            logger.info("平铺后的响应: {}", objectMapper.writeValueAsString(response));
+            return response;
             
         } catch (Exception e) {
             logger.error("执行请求失败: endpoint={}", endpoint, e);
@@ -252,4 +269,57 @@ public class CmbPaymentService {
         body.put("sign", request.getSign());
         return body;
     }
+
+    private boolean cheackResponseSign(String responseJson) {
+        try {
+            // 直接使用原始响应JSON字符串解析，避免序列化时添加额外字段
+            @SuppressWarnings("unchecked")
+            Map<String, String> responseBodyMap = objectMapper.readValue(responseJson, Map.class);
+            String sign = responseBodyMap.remove("sign");
+            logger.info("待验签的内容: {}", responseBodyMap);
+            String content = SignatureUtil.getSignContent(responseBodyMap);
+            return SignatureUtil.sm2Verify(content, sign, config.getPublicKey());
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            logger.error("验证响应签名失败", e);
+            return false;
+        }
+    }
+    
+    /**
+     * 将响应JSON中的biz_content字段展开到顶层
+     * 例如：{"version":"0.0.1","biz_content":"{\"merId\":\"123\"}"} 
+     *      转换为：{"version":"0.0.1","merId":"123"}
+     * 
+     * @param responseJson 原始响应JSON字符串
+     * @return 展开后的JSON字符串
+     */
+    private String flattenBizContent(String responseJson) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> responseMap = objectMapper.readValue(responseJson, Map.class);
+            
+            // 提取biz_content字段
+            Object bizContentObj = responseMap.remove("biz_content");
+            
+            if (bizContentObj != null) {
+                // biz_content是JSON字符串，需要解析
+                String bizContentStr = bizContentObj.toString();
+                if (bizContentStr.startsWith("{") && bizContentStr.endsWith("}")) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> bizContentMap = objectMapper.readValue(bizContentStr, Map.class);
+                    
+                    // 将biz_content中的字段合并到顶层
+                    responseMap.putAll(bizContentMap);
+                }
+            }
+            
+            // 将合并后的Map转换回JSON字符串
+            return objectMapper.writeValueAsString(responseMap);
+        } catch (Exception e) {
+            logger.warn("展开biz_content失败，使用原始响应: {}", e.getMessage());
+            // 如果解析失败，返回原始JSON
+            return responseJson;
+        }
+    }
+
 }
