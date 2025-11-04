@@ -133,5 +133,6 @@ publishing {
         //         password = ossrhPassword
         //     }
         // }
+        maven { url 'https://jitpack.io' }
     }
 }
