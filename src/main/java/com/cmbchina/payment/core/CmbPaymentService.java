@@ -3,6 +3,7 @@ package com.cmbchina.payment.core;
 import com.cmbchina.payment.config.CmbPaymentConfig;
 import com.cmbchina.payment.crypto.SignatureUtil;
 import com.cmbchina.payment.exception.CmbPaymentException;
+import com.cmbchina.payment.util.HttpLoggingUtil;
 import com.cmbchina.payment.model.BaseRequest;
 import com.cmbchina.payment.model.BaseResponse;
 import com.cmbchina.payment.model.request.*;
@@ -14,7 +15,6 @@ import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +37,8 @@ public class CmbPaymentService {
         this.config = config;
         this.restTemplate = createRestTemplate();
         this.objectMapper = new ObjectMapper();
+        // 配置忽略未知属性，用于处理通知数据
+        this.objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     
     /**
@@ -213,7 +215,11 @@ public class CmbPaymentService {
         factory.setConnectTimeout((int) config.getConnectTimeout());
         factory.setReadTimeout((int) config.getReadTimeout());
         
-        return new RestTemplate(factory);
+        RestTemplate restTemplate = new RestTemplate(factory);
+        // 添加HTTP日志拦截器，用于打印请求和响应的原始数据流
+        restTemplate.getInterceptors().add(HttpLoggingUtil.createLoggingInterceptor());
+        
+        return restTemplate;
     }
 
     private Map<String, Object> extractBizContent(BaseRequest request) {

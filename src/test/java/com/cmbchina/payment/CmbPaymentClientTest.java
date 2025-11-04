@@ -118,7 +118,7 @@ class CmbPaymentClientTest {
         assertEquals(config.getMerchantId(), request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
         assertEquals("TEST_REFUND_001", request.getRefundOrderId());
-        assertEquals(5000L, request.getRefundAmt());
+        assertEquals("5000", request.getRefundAmt());
         assertEquals("测试退款原因", request.getRefundReason());
     }
     
@@ -147,7 +147,7 @@ class CmbPaymentClientTest {
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals(10000L, request.getOrderAmt());
+        assertEquals("10000", request.getOrderAmt());
     }
     
     @Test
@@ -163,7 +163,7 @@ class CmbPaymentClientTest {
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals(10000L, request.getOrderAmt());
+        assertEquals("10000", request.getOrderAmt());
     }
     
     @Test
@@ -251,7 +251,8 @@ class CmbPaymentClientTest {
     @Test
     @DisplayName("测试处理通知（正常情况）")
     void testHandleNotify() {
-        String notifyData = "mer_id=test_merchant&order_id=TEST_001&order_stat=SUCCESS";
+        // 使用新的字段名，注意字段名是小写下划线格式
+        String notifyData = "merId=test_merchant&orderId=TEST_001&tradeState=S&txnAmt=10000&payType=ZF";
         
         assertDoesNotThrow(() -> {
             NotifyResponse response = client.handleNotify(notifyData);
