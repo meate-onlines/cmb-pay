@@ -91,7 +91,7 @@ class PaymentController {
                 result.put("data", response);
             } else {
                 result.put("success", false);
-                result.put("message", response.getResultMsg());
+                result.put("message", response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             result.put("success", false);
@@ -121,7 +121,7 @@ class PaymentController {
                 result.put("data", response);
             } else {
                 result.put("success", false);
-                result.put("message", response.getResultMsg());
+                result.put("message", response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             result.put("success", false);
@@ -147,7 +147,7 @@ class PaymentController {
                 result.put("data", response);
             } else {
                 result.put("success", false);
-                result.put("message", response.getResultMsg());
+                result.put("message", response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             result.put("success", false);
@@ -173,7 +173,7 @@ class PaymentController {
                 result.put("data", response);
             } else {
                 result.put("success", false);
-                result.put("message", response.getResultMsg());
+                result.put("message", response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             result.put("success", false);
@@ -201,7 +201,7 @@ class PaymentController {
                 
                 // 处理业务逻辑
                 if ("SUCCESS".equals(notifyResponse.getReturnCode()) && 
-                    "SUCCESS".equals(notifyResponse.getResultCode())) {
+                    "SUCCESS".equals(notifyResponse.getRespCode())) {
                     // 支付成功，更新订单状态
                     updateOrderStatus(notifyResponse.getOrderId(), "PAID");
                 }

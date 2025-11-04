@@ -66,6 +66,31 @@ public class AlipayServiceRequest extends BaseRequest {
     @JsonIgnore
     private String attach;
     
+    @NotBlank(message = "收银员ID不能为空")
+    @JsonIgnore
+    private String userId;
+
+    @JsonIgnore
+    private String identity;
+
+    @JsonIgnore
+    private String businessParams;
+
+    @JsonIgnore
+    private String encryptIdentity;
+
+    @JsonIgnore
+    private String encryptTerminalInfo;
+
+    @JsonIgnore
+    private String encryptTradeAddressInfo;
+
+    @JsonIgnore
+    private String subMerId;
+
+    @JsonIgnore
+    private String subStoreId;
+    
     /**
      * 获取业务参数Map（用于构建bizContent）
      */
@@ -80,6 +105,14 @@ public class AlipayServiceRequest extends BaseRequest {
         if (returnUrl != null) bizContent.put("returnUrl", returnUrl);
         if (expireTime != null) bizContent.put("expireTime", expireTime);
         if (attach != null) bizContent.put("attach", attach);
+        if (userId != null) bizContent.put("userId", userId);
+        if (identity != null) bizContent.put("identity", identity);
+        if (businessParams != null) bizContent.put("businessParams", businessParams);
+        if (encryptIdentity != null) bizContent.put("encryptIdentity", encryptIdentity);
+        if (encryptTerminalInfo != null) bizContent.put("encryptTerminalInfo", encryptTerminalInfo);
+        if (encryptTradeAddressInfo != null) bizContent.put("encryptTradeAddressInfo", encryptTradeAddressInfo);
+        if (subMerId != null) bizContent.put("subMerId", subMerId);
+        if (subStoreId != null) bizContent.put("subStoreId", subStoreId);
         return bizContent;
     }
     
@@ -145,5 +178,69 @@ public class AlipayServiceRequest extends BaseRequest {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
+
+    public String getBusinessParams() {
+        return businessParams;
+    }
+
+    public void setBusinessParams(String businessParams) {
+        this.businessParams = businessParams;
+    }
+
+    public String getEncryptIdentity() {
+        return encryptIdentity;
+    }
+
+    public void setEncryptIdentity(String encryptIdentity) {
+        this.encryptIdentity = encryptIdentity;
+    }
+
+    public String getEncryptTerminalInfo() {
+        return encryptTerminalInfo;
+    }
+
+    public void setEncryptTerminalInfo(String encryptTerminalInfo) {
+        this.encryptTerminalInfo = encryptTerminalInfo;
+    }
+
+    public String getEncryptTradeAddressInfo() {
+        return encryptTradeAddressInfo;
+    }
+
+    public void setEncryptTradeAddressInfo(String encryptTradeAddressInfo) {
+        this.encryptTradeAddressInfo = encryptTradeAddressInfo;
+    }
+
+    public String getSubMerId() {
+        return subMerId;
+    }
+
+    public void setSubMerId(String subMerId) {
+        this.subMerId = subMerId;
+    }
+
+    public String getSubStoreId() {
+        return subStoreId;
+    }
+
+    public void setSubStoreId(String subStoreId) {
+        this.subStoreId = subStoreId;
     }
 }

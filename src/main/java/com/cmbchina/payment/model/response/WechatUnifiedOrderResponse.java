@@ -66,6 +66,16 @@ public class WechatUnifiedOrderResponse extends BaseResponse {
      */
     private String attach;
     
+    /**
+     * 限制支付者
+     */
+    private String limitPayer;
+    
+    /**
+     * 优惠详情
+     */
+    private String promotionDetail;
+    
     public String getMerId() {
         return merId;
     }
@@ -152,5 +162,21 @@ public class WechatUnifiedOrderResponse extends BaseResponse {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+    
+    public String getLimitPayer() {
+        return limitPayer;
+    }
+    
+    public void setLimitPayer(String limitPayer) {
+        this.limitPayer = limitPayer;
+    }
+    
+    public String getPromotionDetail() {
+        return promotionDetail;
+    }
+    
+    public void setPromotionDetail(String promotionDetail) {
+        this.promotionDetail = promotionDetail;
     }
 }

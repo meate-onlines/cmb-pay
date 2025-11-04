@@ -35,58 +35,69 @@ public class QrCodeApplyRequest extends BaseRequest {
     /**
      * 订单金额（分）
      */
-    @NotNull(message = "订单金额不能为空")
+    @NotBlank(message = "交易金额不能为空")
     @JsonIgnore
-    private String orderAmt;
+    private String txnAmt;
     
     /**
      * 商品描述
      */
     @NotBlank(message = "商品描述不能为空")
     @JsonIgnore
-    private String goodsDes;
+    private String body;
     
     /**
      * 异步通知地址
      */
+    @NotBlank(message = "通知地址不能为空")
     @JsonIgnore
     private String notifyUrl;
-    
-    /**
-     * 同步跳转地址
-     */
-    @JsonIgnore
-    private String returnUrl;
     
     /**
      * 订单有效时间（分钟）
      */
     @JsonIgnore
-    private Integer expireTime;
+    private String payValidTime;
     
     /**
      * 附加数据
      */
     @JsonIgnore
-    private String attach;
-    
-    /**
-     * 门店ID
-     */
+    private String mchReserved;
+
     @JsonIgnore
-    private String storeId;
-    
-    /**
-     * 操作员ID
-     */
+    private String subMerId;
+
     @JsonIgnore
-    private String operatorId;
-    
-    /**
-     * 终端号
-     */
+    private String subStoreId;
+
+    @NotBlank(message = "收银员不能为空")
     @JsonIgnore
-    private String terminalId;
+    private String userId;
+
+    @JsonIgnore
+    private String termId;
+
+    @JsonIgnore
+    private String currencyCode;
+
+    @JsonIgnore
+    private String encryptIdentity;
+
+    @JsonIgnore
+    private String policyNo;
+
+    @JsonIgnore
+    private String region;
+
+    @JsonIgnore
+    private String encryptTerminalInfo;
+
+    @JsonIgnore
+    private String businessParams;
+
+    @JsonIgnore
+    private String encryptTradeAddressInfo;
     
     /**
      * 获取业务参数Map（用于构建bizContent）
@@ -95,16 +106,23 @@ public class QrCodeApplyRequest extends BaseRequest {
     public Map<String, Object> getBizContentMap() {
         Map<String, Object> bizContent = new HashMap<>();
         if (merId != null) bizContent.put("merId", merId);
+        if (subMerId != null) bizContent.put("subMerId", subMerId);
+        if (subStoreId != null) bizContent.put("subStoreId", subStoreId);
         if (orderId != null) bizContent.put("orderId", orderId);
-        if (orderAmt != null) bizContent.put("orderAmt", orderAmt);
-        if (goodsDes != null) bizContent.put("goodsDes", goodsDes);
+        if (userId != null) bizContent.put("userId", userId);
+        if (termId != null) bizContent.put("termId", termId);
+        if (payValidTime != null) bizContent.put("payValidTime", payValidTime);
         if (notifyUrl != null) bizContent.put("notifyUrl", notifyUrl);
-        if (returnUrl != null) bizContent.put("returnUrl", returnUrl);
-        if (expireTime != null) bizContent.put("expireTime", expireTime);
-        if (attach != null) bizContent.put("attach", attach);
-        if (storeId != null) bizContent.put("storeId", storeId);
-        if (operatorId != null) bizContent.put("operatorId", operatorId);
-        if (terminalId != null) bizContent.put("terminalId", terminalId);
+        if (txnAmt != null) bizContent.put("txnAmt", txnAmt);
+        if (currencyCode != null) bizContent.put("currencyCode", currencyCode);
+        if (body != null) bizContent.put("body", body);
+        if (mchReserved != null) bizContent.put("mchReserved", mchReserved);
+        if (encryptIdentity != null) bizContent.put("encryptIdentity", encryptIdentity);
+        if (policyNo != null) bizContent.put("policyNo", policyNo);
+        if (region != null) bizContent.put("region", region);
+        if (encryptTerminalInfo != null) bizContent.put("encryptTerminalInfo", encryptTerminalInfo);
+        if (businessParams != null) bizContent.put("businessParams", businessParams);
+        if (encryptTradeAddressInfo != null) bizContent.put("encryptTradeAddressInfo", encryptTradeAddressInfo);
         return bizContent;
     }
     
@@ -124,20 +142,20 @@ public class QrCodeApplyRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public String getOrderAmt() {
-        return orderAmt;
+    public String getTxnAmt() {
+        return txnAmt;
     }
     
-    public void setOrderAmt(String orderAmt) {
-        this.orderAmt = orderAmt;
+    public void setTxnAmt(String txnAmt) {
+        this.txnAmt = txnAmt;
     }
     
-    public String getGoodsDes() {
-        return goodsDes;
+    public String getBody() {
+        return body;
     }
     
-    public void setGoodsDes(String goodsDes) {
-        this.goodsDes = goodsDes;
+    public void setBody(String body) {
+        this.body = body;
     }
     
     public String getNotifyUrl() {
@@ -148,51 +166,107 @@ public class QrCodeApplyRequest extends BaseRequest {
         this.notifyUrl = notifyUrl;
     }
     
-    public String getReturnUrl() {
-        return returnUrl;
+    public String getPayValidTime() {
+        return payValidTime;
     }
     
-    public void setReturnUrl(String returnUrl) {
-        this.returnUrl = returnUrl;
+    public void setPayValidTime(String payValidTime) {
+        this.payValidTime = payValidTime;
     }
     
-    public Integer getExpireTime() {
-        return expireTime;
+    public String getMchReserved() {
+        return mchReserved;
     }
     
-    public void setExpireTime(Integer expireTime) {
-        this.expireTime = expireTime;
+    public void setMchReserved(String mchReserved) {
+        this.mchReserved = mchReserved;
     }
-    
-    public String getAttach() {
-        return attach;
+
+    public String getSubMerId() {
+        return subMerId;
     }
-    
-    public void setAttach(String attach) {
-        this.attach = attach;
+
+    public void setSubMerId(String subMerId) {
+        this.subMerId = subMerId;
     }
-    
-    public String getStoreId() {
-        return storeId;
+
+    public String getSubStoreId() {
+        return subStoreId;
     }
-    
-    public void setStoreId(String storeId) {
-        this.storeId = storeId;
+
+    public void setSubStoreId(String subStoreId) {
+        this.subStoreId = subStoreId;
     }
-    
-    public String getOperatorId() {
-        return operatorId;
+
+    public String getUserId() {
+        return userId;
     }
-    
-    public void setOperatorId(String operatorId) {
-        this.operatorId = operatorId;
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
-    
-    public String getTerminalId() {
-        return terminalId;
+
+    public String getTermId() {
+        return termId;
     }
-    
-    public void setTerminalId(String terminalId) {
-        this.terminalId = terminalId;
+
+    public void setTermId(String termId) {
+        this.termId = termId;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public String getEncryptIdentity() {
+        return encryptIdentity;
+    }
+
+    public void setEncryptIdentity(String encryptIdentity) {
+        this.encryptIdentity = encryptIdentity;
+    }
+
+    public String getPolicyNo() {
+        return policyNo;
+    }
+
+    public void setPolicyNo(String policyNo) {
+        this.policyNo = policyNo;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getEncryptTerminalInfo() {
+        return encryptTerminalInfo;
+    }
+
+    public void setEncryptTerminalInfo(String encryptTerminalInfo) {
+        this.encryptTerminalInfo = encryptTerminalInfo;
+    }
+
+    public String getBusinessParams() {
+        return businessParams;
+    }
+
+    public void setBusinessParams(String businessParams) {
+        this.businessParams = businessParams;
+    }
+
+    public String getEncryptTradeAddressInfo() {
+        return encryptTradeAddressInfo;
+    }
+
+    public void setEncryptTradeAddressInfo(String encryptTradeAddressInfo) {
+        this.encryptTradeAddressInfo = encryptTradeAddressInfo;
     }
 }

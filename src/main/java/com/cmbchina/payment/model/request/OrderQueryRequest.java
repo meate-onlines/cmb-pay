@@ -33,7 +33,7 @@ public class OrderQueryRequest extends BaseRequest {
      * 平台订单号（与商户订单号二选一）
      */
     @JsonIgnore
-    private String tnOrderId;
+    private String cmbOrderId;
     
     /**
      * 获取业务参数Map（用于构建bizContent）
@@ -43,7 +43,7 @@ public class OrderQueryRequest extends BaseRequest {
         Map<String, Object> bizContent = new HashMap<>();
         if (merId != null) bizContent.put("merId", merId);
         if (orderId != null) bizContent.put("orderId", orderId);
-        if (tnOrderId != null) bizContent.put("tnOrderId", tnOrderId);
+        if (cmbOrderId != null) bizContent.put("cmbOrderId", cmbOrderId);
         return bizContent;
     }
     
@@ -63,11 +63,11 @@ public class OrderQueryRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public String getTnOrderId() {
-        return tnOrderId;
+    public String getCmbOrderId() {
+        return cmbOrderId;
     }
     
-    public void setTnOrderId(String tnOrderId) {
-        this.tnOrderId = tnOrderId;
+    public void setCmbOrderId(String cmbOrderId) {
+        this.cmbOrderId = cmbOrderId;
     }
 }

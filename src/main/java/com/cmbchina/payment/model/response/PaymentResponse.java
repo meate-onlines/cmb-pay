@@ -80,6 +80,8 @@ public class PaymentResponse extends BaseResponse {
      * 附加数据
      */
     private String attach;
+
+    private String issAddnData;
     
     public String getMerId() {
         return merId;
@@ -191,5 +193,13 @@ public class PaymentResponse extends BaseResponse {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+
+    public String getIssAddnData() {
+        return issAddnData;
+    }
+
+    public void setIssAddnData(String issAddnData) {
+        this.issAddnData = issAddnData;
     }
 }

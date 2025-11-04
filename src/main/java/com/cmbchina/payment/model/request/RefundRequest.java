@@ -64,6 +64,36 @@ public class RefundRequest extends BaseRequest {
     private String attach;
     
     /**
+     * 原商户订单号
+     */
+    @JsonIgnore
+    private String origOutOrderId;
+
+    /**
+     * 附加数据
+     */
+    @JsonIgnore
+    private String acqAddnData;
+
+    /**
+     * 加密交易地址信息
+     */
+    @JsonIgnore
+    private String encryptTradeAddressInfo;
+
+    /**
+     * 子商户号
+     */
+    @JsonIgnore
+    private String subMerId;
+
+    /**
+     * 子门店号
+     */
+    @JsonIgnore
+    private String subStoreId;
+    
+    /**
      * 获取业务参数Map（用于构建bizContent）
      */
     @JsonIgnore
@@ -76,6 +106,11 @@ public class RefundRequest extends BaseRequest {
         if (refundReason != null) bizContent.put("refundReason", refundReason);
         if (notifyUrl != null) bizContent.put("notifyUrl", notifyUrl);
         if (attach != null) bizContent.put("attach", attach);
+        if (origOutOrderId != null) bizContent.put("origOutOrderId", origOutOrderId);
+        if (acqAddnData != null) bizContent.put("acqAddnData", acqAddnData);
+        if (encryptTradeAddressInfo != null) bizContent.put("encryptTradeAddressInfo", encryptTradeAddressInfo);
+        if (subMerId != null) bizContent.put("subMerId", subMerId);
+        if (subStoreId != null) bizContent.put("subStoreId", subStoreId);
         return bizContent;
     }
     
@@ -133,5 +168,45 @@ public class RefundRequest extends BaseRequest {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+
+    public String getOrigOutOrderId() {
+        return origOutOrderId;
+    }
+
+    public void setOrigOutOrderId(String origOutOrderId) {
+        this.origOutOrderId = origOutOrderId;
+    }
+
+    public String getAcqAddnData() {
+        return acqAddnData;
+    }
+
+    public void setAcqAddnData(String acqAddnData) {
+        this.acqAddnData = acqAddnData;
+    }
+
+    public String getEncryptTradeAddressInfo() {
+        return encryptTradeAddressInfo;
+    }
+
+    public void setEncryptTradeAddressInfo(String encryptTradeAddressInfo) {
+        this.encryptTradeAddressInfo = encryptTradeAddressInfo;
+    }
+
+    public String getSubMerId() {
+        return subMerId;
+    }
+
+    public void setSubMerId(String subMerId) {
+        this.subMerId = subMerId;
+    }
+
+    public String getSubStoreId() {
+        return subStoreId;
+    }
+
+    public void setSubStoreId(String subStoreId) {
+        this.subStoreId = subStoreId;
     }
 }

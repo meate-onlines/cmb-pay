@@ -33,27 +33,32 @@ public abstract class BaseResponse {
     
     /**
      * 返回码
+     * SUCCESS/FAIL,此字段是通信标识，非交易标识，交易是否成功需要查看respCode来判断。
+     * SUCCESS表示商户上送的报文符合规范，FAIL表示报文内的字段不符合规范，包括长度超长、非法字符、签名错误等
      */
     @JsonProperty("returnCode")
     private String returnCode;
     
     /**
-     * 返回消息
+     * 响应码（returnCode为SUCCESS时返回）
+     * 业务错误码，成功为SUCCESS，失败为FAIL
      */
-    @JsonProperty("returnMsg")
-    private String returnMsg;
+    @JsonProperty("respCode")
+    private String respCode;
     
     /**
-     * 业务结果码
+     * 应答信息（returnCode或respCode为FAIL时返回）
+     * 请求处理失败的详细描述信息
      */
-    @JsonProperty("resultCode")
-    private String resultCode;
-    
+    @JsonProperty("respMsg")
+    private String respMsg;
+
     /**
-     * 业务结果描述
+     * 错误码（returnCode或respCode为FAIL时返回）
+     * 请求处理失败的错误码信息
      */
-    @JsonProperty("resultMsg")
-    private String resultMsg;
+    @JsonProperty("errCode")
+    private String errCode;
     
     /**
      * 签名
@@ -93,28 +98,20 @@ public abstract class BaseResponse {
         this.returnCode = returnCode;
     }
     
-    public String getReturnMsg() {
-        return returnMsg;
+    public String getRespCode() {
+        return respCode;
     }
     
-    public void setReturnMsg(String returnMsg) {
-        this.returnMsg = returnMsg;
+    public void setRespCode(String respCode) {
+        this.respCode = respCode;
     }
     
-    public String getResultCode() {
-        return resultCode;
+    public String getRespMsg() {
+        return respMsg;
     }
     
-    public void setResultCode(String resultCode) {
-        this.resultCode = resultCode;
-    }
-    
-    public String getResultMsg() {
-        return resultMsg;
-    }
-    
-    public void setResultMsg(String resultMsg) {
-        this.resultMsg = resultMsg;
+    public void setRespMsg(String respMsg) {
+        this.respMsg = respMsg;
     }
     
     public String getSign() {
@@ -124,6 +121,14 @@ public abstract class BaseResponse {
     public void setSign(String sign) {
         this.sign = sign;
     }
+
+    public String getErrCode() {
+        return errCode;
+    }
+    
+    public void setErrCode(String errCode) {
+        this.errCode = errCode;
+    }
     
     /**
      * 判断请求是否成功
@@ -131,6 +136,6 @@ public abstract class BaseResponse {
      * @return 是否成功
      */
     public boolean isSuccess() {
-        return "SUCCESS".equals(returnCode) && "SUCCESS".equals(resultCode);
+        return "SUCCESS".equals(returnCode) && "SUCCESS".equals(respCode);
     }
 }

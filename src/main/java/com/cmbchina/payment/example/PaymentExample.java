@@ -57,21 +57,21 @@ public class PaymentExample {
         QrCodeApplyRequest request = new QrCodeApplyRequest();
         request.setMerId("your_merchant_id");
         request.setOrderId("ORDER_" + System.currentTimeMillis());
-        request.setOrderAmt("10000"); // 100.00元，单位：分
-        request.setGoodsDes("测试商品");
+        request.setUserId("test_user"); // 收银员ID，必填
+        request.setTxnAmt("10000"); // 100.00元，单位：分
+        request.setBody("测试商品");
         request.setNotifyUrl("https://your-domain.com/notify");
-        request.setReturnUrl("https://your-domain.com/return");
-        request.setExpireTime(30); // 30分钟过期
+        request.setPayValidTime("900"); // 支付有效时间，单位：秒，默认900秒
         
         try {
             QrCodeApplyResponse response = client.qrCodeApply(request);
             
             if (response.isSuccess()) {
                 System.out.println("二维码链接: " + response.getQrCode());
-                System.out.println("二维码图片: " + response.getQrCodeImg());
-                System.out.println("平台订单号: " + response.getTnOrderId());
+                System.out.println("平台订单号: " + response.getCmbOrderId());
+                System.out.println("订单发送时间: " + response.getTxnTime());
             } else {
-                System.out.println("申请失败: " + response.getResultMsg());
+                System.out.println("申请失败: " + response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             System.err.println("支付异常: " + e.getMessage());
@@ -94,10 +94,16 @@ public class PaymentExample {
             OrderQueryResponse response = client.orderQuery(queryRequest);
             
             if (response.isSuccess()) {
-                System.out.println("订单状态: " + response.getOrderStat());
-                System.out.println("订单金额: " + response.getOrderAmt());
+                System.out.println("平台订单号: " + response.getCmbOrderId());
+                System.out.println("交易状态: " + response.getTradeState());
+                System.out.println("交易金额: " + response.getTxnAmt());
+                System.out.println("优惠金额: " + response.getDscAmt());
                 System.out.println("支付方式: " + response.getPayType());
-                System.out.println("支付时间: " + response.getPayTime());
+                System.out.println("订单发送时间: " + response.getTxnTime());
+                if (response.getEndDate() != null && response.getEndTime() != null) {
+                    System.out.println("订单完成时间: " + response.getEndDate() + response.getEndTime());
+                }
+                System.out.println("第三方订单号: " + response.getThirdOrderId());
             }
         } catch (CmbPaymentException e) {
             System.err.println("查询异常: " + e.getMessage());
@@ -183,12 +189,19 @@ public class PaymentExample {
                 // 处理通知数据
                 NotifyResponse notifyResponse = client.handleNotify(notifyData);
                 
-                System.out.println("订单号: " + notifyResponse.getOrderId());
-                System.out.println("订单状态: " + notifyResponse.getOrderStat());
-                System.out.println("订单金额: " + notifyResponse.getOrderAmt());
+                System.out.println("商户订单号: " + notifyResponse.getOrderId());
+                System.out.println("平台订单号: " + notifyResponse.getCmbOrderId());
+                System.out.println("交易金额: " + notifyResponse.getTxnAmt());
+                System.out.println("优惠金额: " + notifyResponse.getDscAmt());
+                System.out.println("支付方式: " + notifyResponse.getPayType());
+                System.out.println("订单发送时间: " + notifyResponse.getTxnTime());
+                if (notifyResponse.getEndDate() != null && notifyResponse.getEndTime() != null) {
+                    System.out.println("订单完成时间: " + notifyResponse.getEndDate() + notifyResponse.getEndTime());
+                }
+                System.out.println("第三方订单号: " + notifyResponse.getThirdOrderId());
                 
                 // 处理业务逻辑
-                if ("SUCCESS".equals(notifyResponse.getOrderStat())) {
+                if (notifyResponse.isSuccess()) {
                     System.out.println("支付成功，更新订单状态");
                     // 这里可以调用业务系统更新订单状态
                 }

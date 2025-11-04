@@ -12,49 +12,30 @@ import com.cmbchina.payment.model.BaseResponse;
 public class QrCodeApplyResponse extends BaseResponse {
     
     /**
-     * 商户号
+     * 商户号（returnCode为SUCCESS时返回）
      */
     private String merId;
     
     /**
-     * 商户订单号
+     * 商户订单号（returnCode为SUCCESS时返回）
      */
     private String orderId;
     
     /**
-     * 平台订单号
-     */
-    private String tnOrderId;
-    
-    /**
-     * 二维码链接
+     * 二维码（returnCode和respCode为SUCCESS时返回）
      */
     private String qrCode;
     
     /**
-     * 二维码图片Base64
+     * 平台订单号（returnCode和respCode为SUCCESS时返回）
      */
-    private String qrCodeImg;
+    private String cmbOrderId;
     
     /**
-     * 订单状态
+     * 订单发送时间（returnCode和respCode为SUCCESS时返回）
+     * 格式：yyyyMMddHHmmss
      */
-    private String orderStat;
-    
-    /**
-     * 订单金额（分）
-     */
-    private String orderAmt;
-    
-    /**
-     * 订单创建时间
-     */
-    private String orderDate;
-    
-    /**
-     * 订单有效期至
-     */
-    private String expireTime;
+    private String txnTime;
     
     public String getMerId() {
         return merId;
@@ -72,14 +53,6 @@ public class QrCodeApplyResponse extends BaseResponse {
         this.orderId = orderId;
     }
     
-    public String getTnOrderId() {
-        return tnOrderId;
-    }
-    
-    public void setTnOrderId(String tnOrderId) {
-        this.tnOrderId = tnOrderId;
-    }
-    
     public String getQrCode() {
         return qrCode;
     }
@@ -88,43 +61,19 @@ public class QrCodeApplyResponse extends BaseResponse {
         this.qrCode = qrCode;
     }
     
-    public String getQrCodeImg() {
-        return qrCodeImg;
+    public String getCmbOrderId() {
+        return cmbOrderId;
     }
     
-    public void setQrCodeImg(String qrCodeImg) {
-        this.qrCodeImg = qrCodeImg;
+    public void setCmbOrderId(String cmbOrderId) {
+        this.cmbOrderId = cmbOrderId;
     }
     
-    public String getOrderStat() {
-        return orderStat;
+    public String getTxnTime() {
+        return txnTime;
     }
     
-    public void setOrderStat(String orderStat) {
-        this.orderStat = orderStat;
-    }
-    
-    public String getOrderAmt() {
-        return orderAmt;
-    }
-    
-    public void setOrderAmt(String orderAmt) {
-        this.orderAmt = orderAmt;
-    }
-    
-    public String getOrderDate() {
-        return orderDate;
-    }
-    
-    public void setOrderDate(String orderDate) {
-        this.orderDate = orderDate;
-    }
-    
-    public String getExpireTime() {
-        return expireTime;
-    }
-    
-    public void setExpireTime(String expireTime) {
-        this.expireTime = expireTime;
+    public void setTxnTime(String txnTime) {
+        this.txnTime = txnTime;
     }
 }

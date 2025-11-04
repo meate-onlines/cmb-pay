@@ -46,6 +46,7 @@ public abstract class BaseRequest {
      */
     @JsonProperty("sign")
     private String sign;
+
     
     public String getVersion() {
         return version;

@@ -50,6 +50,10 @@ public class RefundResponse extends BaseResponse {
      * 附加数据
      */
     private String attach;
+
+    private String failureReason;
+
+    private String issAddnData;
     
     public String getMerId() {
         return merId;
@@ -113,5 +117,21 @@ public class RefundResponse extends BaseResponse {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public String getIssAddnData() {
+        return issAddnData;
+    }
+
+    public void setIssAddnData(String issAddnData) {
+        this.issAddnData = issAddnData;
     }
 }

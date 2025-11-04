@@ -56,6 +56,14 @@ public class AlipayServiceResponse extends BaseResponse {
      */
     private String attach;
     
+    private String payType;
+
+    private String thirdOrderId;
+
+    private String buyerUserId;
+
+    private String promotionDetail;
+
     public String getMerId() {
         return merId;
     }

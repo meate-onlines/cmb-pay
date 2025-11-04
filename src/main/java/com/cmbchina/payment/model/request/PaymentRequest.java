@@ -85,6 +85,36 @@ public class PaymentRequest extends BaseRequest {
     private String terminalId;
     
     /**
+     * 商品优惠金额
+     */
+    @JsonIgnore
+    private String itemDiscount;
+
+    /**
+     * 银联支付标识
+     */
+    @JsonIgnore
+    private String ecnyPayment;
+
+    /**
+     * 加密终端信息
+     */
+    @JsonIgnore
+    private String encryptTerminalInfo;
+
+    /**
+     * 子商户号
+     */
+    @JsonIgnore
+    private String subMerId;
+
+    /**
+     * 子门店号
+     */
+    @JsonIgnore
+    private String subStoreId;
+    
+    /**
      * 获取业务参数Map（用于构建bizContent）
      */
     @JsonIgnore
@@ -100,6 +130,11 @@ public class PaymentRequest extends BaseRequest {
         if (storeId != null) bizContent.put("storeId", storeId);
         if (operatorId != null) bizContent.put("operatorId", operatorId);
         if (terminalId != null) bizContent.put("terminalId", terminalId);
+        if (itemDiscount != null) bizContent.put("itemDiscount", itemDiscount);
+        if (ecnyPayment != null) bizContent.put("ecnyPayment", ecnyPayment);
+        if (encryptTerminalInfo != null) bizContent.put("encryptTerminalInfo", encryptTerminalInfo);
+        if (subMerId != null) bizContent.put("subMerId", subMerId);
+        if (subStoreId != null) bizContent.put("subStoreId", subStoreId);
         return bizContent;
     }
     
@@ -181,5 +216,45 @@ public class PaymentRequest extends BaseRequest {
     
     public void setTerminalId(String terminalId) {
         this.terminalId = terminalId;
+    }
+
+    public String getItemDiscount() {
+        return itemDiscount;
+    }
+
+    public void setItemDiscount(String itemDiscount) {
+        this.itemDiscount = itemDiscount;
+    }
+
+    public String getEcnyPayment() {
+        return ecnyPayment;
+    }
+
+    public void setEcnyPayment(String ecnyPayment) {
+        this.ecnyPayment = ecnyPayment;
+    }
+
+    public String getEncryptTerminalInfo() {
+        return encryptTerminalInfo;
+    }
+
+    public void setEncryptTerminalInfo(String encryptTerminalInfo) {
+        this.encryptTerminalInfo = encryptTerminalInfo;
+    }
+
+    public String getSubMerId() {
+        return subMerId;
+    }
+
+    public void setSubMerId(String subMerId) {
+        this.subMerId = subMerId;
+    }
+
+    public String getSubStoreId() {
+        return subStoreId;
+    }
+
+    public void setSubStoreId(String subStoreId) {
+        this.subStoreId = subStoreId;
     }
 }

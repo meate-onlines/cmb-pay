@@ -56,6 +56,12 @@ public class RefundQueryResponse extends BaseResponse {
      */
     private String attach;
     
+    private String failureReason;
+
+    private String issAddnData;
+
+    private String refundDetail;
+    
     public String getMerId() {
         return merId;
     }
@@ -126,5 +132,29 @@ public class RefundQueryResponse extends BaseResponse {
     
     public void setAttach(String attach) {
         this.attach = attach;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public String getIssAddnData() {
+        return issAddnData;
+    }
+
+    public void setIssAddnData(String issAddnData) {
+        this.issAddnData = issAddnData;
+    }
+
+    public String getRefundDetail() {
+        return refundDetail;
+    }
+
+    public void setRefundDetail(String refundDetail) {
+        this.refundDetail = refundDetail;
     }
 }

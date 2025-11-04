@@ -66,15 +66,16 @@ class CmbPaymentClientTest {
         QrCodeApplyRequest request = new QrCodeApplyRequest();
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_" + System.currentTimeMillis());
-        request.setOrderAmt("10000");
-        request.setGoodsDes("测试商品描述");
+        request.setTxnAmt("10000");
+        request.setBody("测试商品描述");
         request.setNotifyUrl(config.getNotifyUrl());
-        
+        request.setUserId("test_user"); // Add mandatory field
+
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
         assertNotNull(request.getOrderId());
-        assertEquals("10000", request.getOrderAmt());
-        assertEquals("测试商品描述", request.getGoodsDes());
+        assertEquals("10000", request.getTxnAmt());
+        assertEquals("测试商品描述", request.getBody());
     }
     
     @Test

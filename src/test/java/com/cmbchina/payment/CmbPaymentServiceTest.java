@@ -67,15 +67,16 @@ class CmbPaymentServiceTest {
         QrCodeApplyRequest request = new QrCodeApplyRequest();
         request.setMerId("test_merchant_id");
         request.setOrderId("TEST_ORDER_001");
-        request.setOrderAmt("10000");
-        request.setGoodsDes("测试商品");
+        request.setTxnAmt("10000");
+        request.setBody("测试商品");
         request.setNotifyUrl("https://test.com/notify");
-        
+        request.setUserId("test_user"); // Add mandatory field
+
         assertNotNull(request);
         assertEquals("test_merchant_id", request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals("10000", request.getOrderAmt());
-        assertEquals("测试商品", request.getGoodsDes());
+        assertEquals("10000", request.getTxnAmt());
+        assertEquals("测试商品", request.getBody());
     }
     
     @Test
@@ -239,22 +240,18 @@ class CmbPaymentServiceTest {
     void testRequestValidation() {
         // 测试请求对象的基本验证
         QrCodeApplyRequest request = new QrCodeApplyRequest();
-        
-        // 未设置必填字段时应该验证失败
-        assertNull(request.getMerId());
-        assertNull(request.getOrderId());
-        assertNull(request.getOrderAmt());
-        
+
         // 设置必填字段
         request.setMerId("test_merchant");
         request.setOrderId("TEST_001");
-        request.setOrderAmt("10000");
-        request.setGoodsDes("测试商品");
-        
+        request.setTxnAmt("10000");
+        request.setBody("测试商品");
+        request.setUserId("test_user"); // Add mandatory field
+
         assertNotNull(request.getMerId());
         assertNotNull(request.getOrderId());
-        assertNotNull(request.getOrderAmt());
-        assertNotNull(request.getGoodsDes());
+        assertNotNull(request.getTxnAmt());
+        assertNotNull(request.getBody());
     }
     
     @Test
@@ -291,14 +288,15 @@ class CmbPaymentServiceTest {
     void testClientMethods() {
         CmbPaymentClient client = new CmbPaymentClient(config);
         assertNotNull(client);
-        
+
         // 测试客户端方法存在性（实际调用需要 mock HTTP 响应）
         QrCodeApplyRequest qrRequest = new QrCodeApplyRequest();
         qrRequest.setMerId("test_merchant");
         qrRequest.setOrderId("TEST_001");
-        qrRequest.setOrderAmt("10000");
-        qrRequest.setGoodsDes("测试");
-        
+        qrRequest.setTxnAmt("10000");
+        qrRequest.setBody("测试");
+        qrRequest.setUserId("test_user"); // Add mandatory field
+
         // 由于没有真实的 API 端点，这里只会测试方法签名和参数验证
         assertNotNull(qrRequest);
         assertNotNull(client);

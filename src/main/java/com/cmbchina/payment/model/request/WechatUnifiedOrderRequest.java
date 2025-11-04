@@ -99,6 +99,30 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
      */
     @JsonIgnore
     private String terminalId;
+
+    @JsonIgnore
+    private String limitPayer;
+
+    @JsonIgnore
+    private String itemDiscount;
+
+    @JsonIgnore
+    private String promotionDetail;
+
+    @JsonIgnore
+    private String encryptIdentity;
+
+    @JsonIgnore
+    private String encryptTerminalInfo;
+
+    @JsonIgnore
+    private String encryptTradeAddressInfo;
+
+    @JsonIgnore
+    private String subMerId;
+
+    @JsonIgnore
+    private String subStoreId;
     
     /**
      * 获取业务参数Map（用于构建bizContent）
@@ -119,6 +143,14 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
         if (storeId != null) bizContent.put("storeId", storeId);
         if (operatorId != null) bizContent.put("operatorId", operatorId);
         if (terminalId != null) bizContent.put("terminalId", terminalId);
+        if (limitPayer != null) bizContent.put("limitPayer", limitPayer);
+        if (itemDiscount != null) bizContent.put("itemDiscount", itemDiscount);
+        if (promotionDetail != null) bizContent.put("promotionDetail", promotionDetail);
+        if (encryptIdentity != null) bizContent.put("encryptIdentity", encryptIdentity);
+        if (encryptTerminalInfo != null) bizContent.put("encryptTerminalInfo", encryptTerminalInfo);
+        if (encryptTradeAddressInfo != null) bizContent.put("encryptTradeAddressInfo", encryptTradeAddressInfo);
+        if (subMerId != null) bizContent.put("subMerId", subMerId);
+        if (subStoreId != null) bizContent.put("subStoreId", subStoreId);
         return bizContent;
     }
     
@@ -224,5 +256,69 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
     
     public void setTerminalId(String terminalId) {
         this.terminalId = terminalId;
+    }
+
+    public String getLimitPayer() {
+        return limitPayer;
+    }
+
+    public void setLimitPayer(String limitPayer) {
+        this.limitPayer = limitPayer;
+    }
+
+    public String getItemDiscount() {
+        return itemDiscount;
+    }
+
+    public void setItemDiscount(String itemDiscount) {
+        this.itemDiscount = itemDiscount;
+    }
+
+    public String getPromotionDetail() {
+        return promotionDetail;
+    }
+
+    public void setPromotionDetail(String promotionDetail) {
+        this.promotionDetail = promotionDetail;
+    }
+
+    public String getEncryptIdentity() {
+        return encryptIdentity;
+    }
+
+    public void setEncryptIdentity(String encryptIdentity) {
+        this.encryptIdentity = encryptIdentity;
+    }
+
+    public String getEncryptTerminalInfo() {
+        return encryptTerminalInfo;
+    }
+
+    public void setEncryptTerminalInfo(String encryptTerminalInfo) {
+        this.encryptTerminalInfo = encryptTerminalInfo;
+    }
+
+    public String getEncryptTradeAddressInfo() {
+        return encryptTradeAddressInfo;
+    }
+
+    public void setEncryptTradeAddressInfo(String encryptTradeAddressInfo) {
+        this.encryptTradeAddressInfo = encryptTradeAddressInfo;
+    }
+
+    public String getSubMerId() {
+        return subMerId;
+    }
+
+    public void setSubMerId(String subMerId) {
+        this.subMerId = subMerId;
+    }
+
+    public String getSubStoreId() {
+        return subStoreId;
+    }
+
+    public void setSubStoreId(String subStoreId) {
+        this.subStoreId = subStoreId;
     }
 }
