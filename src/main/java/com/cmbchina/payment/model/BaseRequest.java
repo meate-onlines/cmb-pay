@@ -1,6 +1,7 @@
 package com.cmbchina.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -17,23 +18,33 @@ public abstract class BaseRequest {
      * 版本号，固定为0.0.1
      */
     @NotBlank(message = "版本号不能为空")
+    @JsonProperty("version")
     private String version = "0.0.1";
     
     /**
      * 编码方式，固定为UTF-8
      */
     @NotBlank(message = "编码方式不能为空")
+    @JsonProperty("encoding")
     private String encoding = "UTF-8";
     
     /**
      * 签名方法，固定为02（国密SM2）
      */
     @NotBlank(message = "签名方法不能为空")
+    @JsonProperty("signMethod")
     private String signMethod = "02";
+    
+    /**
+     * 业务参数（JSON字符串）
+     */
+    @JsonProperty("bizContent")
+    private String bizContent;
     
     /**
      * 签名
      */
+    @JsonProperty("sign")
     private String sign;
     
     public String getVersion() {
@@ -58,6 +69,14 @@ public abstract class BaseRequest {
     
     public void setSignMethod(String signMethod) {
         this.signMethod = signMethod;
+    }
+    
+    public String getBizContent() {
+        return bizContent;
+    }
+    
+    public void setBizContent(String bizContent) {
+        this.bizContent = bizContent;
     }
     
     public String getSign() {

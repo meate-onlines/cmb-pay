@@ -1,7 +1,6 @@
 package com.cmbchina.payment.model.response;
 
 import com.cmbchina.payment.model.BaseResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 订单查询响应
@@ -15,85 +14,71 @@ public class OrderQueryResponse extends BaseResponse {
     /**
      * 商户号
      */
-    @JsonProperty("mer_id")
     private String merId;
     
     /**
      * 商户订单号
      */
-    @JsonProperty("order_id")
     private String orderId;
     
     /**
      * 平台订单号
      */
-    @JsonProperty("tn_order_id")
     private String tnOrderId;
     
     /**
      * 订单状态
      */
-    @JsonProperty("order_stat")
     private String orderStat;
     
     /**
      * 订单金额（分）
      */
-    @JsonProperty("order_amt")
     private Long orderAmt;
     
     /**
      * 实付金额（分）
      */
-    @JsonProperty("pay_amt")
     private Long payAmt;
     
     /**
      * 优惠金额（分）
      */
-    @JsonProperty("discount_amt")
     private Long discountAmt;
     
     /**
      * 支付方式
      */
-    @JsonProperty("pay_type")
     private String payType;
     
     /**
      * 支付时间
      */
-    @JsonProperty("pay_time")
     private String payTime;
     
     /**
      * 第三方订单号
      */
-    @JsonProperty("third_order_id")
     private String thirdOrderId;
     
     /**
      * 第三方流水号
      */
-    @JsonProperty("third_serial_no")
     private String thirdSerialNo;
     
     /**
      * 买家用户标识
      */
-    @JsonProperty("buyer_user_id")
     private String buyerUserId;
     
     /**
      * 买家账号
      */
-    @JsonProperty("buyer_logon_id")
     private String buyerLogonId;
     
     /**
      * 附加数据
      */
-    @JsonProperty("attach")
     private String attach;
     
     public String getMerId() {

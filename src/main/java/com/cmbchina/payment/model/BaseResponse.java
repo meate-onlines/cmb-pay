@@ -1,6 +1,7 @@
 package com.cmbchina.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 基础响应类
@@ -15,41 +16,49 @@ public abstract class BaseResponse {
     /**
      * 版本号
      */
+    @JsonProperty("version")
     private String version;
     
     /**
      * 编码方式
      */
+    @JsonProperty("encoding")
     private String encoding;
     
     /**
      * 签名方法
      */
+    @JsonProperty("signMethod")
     private String signMethod;
     
     /**
      * 返回码
      */
+    @JsonProperty("returnCode")
     private String returnCode;
     
     /**
      * 返回消息
      */
+    @JsonProperty("returnMsg")
     private String returnMsg;
     
     /**
      * 业务结果码
      */
+    @JsonProperty("resultCode")
     private String resultCode;
     
     /**
      * 业务结果描述
      */
+    @JsonProperty("resultMsg")
     private String resultMsg;
     
     /**
      * 签名
      */
+    @JsonProperty("sign")
     private String sign;
     
     public String getVersion() {
