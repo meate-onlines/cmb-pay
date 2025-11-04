@@ -1,10 +1,13 @@
 package com.cmbchina.payment.model.request;
 
 import com.cmbchina.payment.model.BaseRequest;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 微信统一下单请求
@@ -19,14 +22,14 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
      * 商户号
      */
     @NotBlank(message = "商户号不能为空")
-    @JsonProperty("mer_id")
+    @JsonIgnore
     private String merId;
     
     /**
      * 商户订单号
      */
     @NotBlank(message = "商户订单号不能为空")
-    @JsonProperty("order_id")
+    @JsonIgnore
     private String orderId;
     
     /**
@@ -34,70 +37,118 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
      */
     @NotNull(message = "订单金额不能为空")
     @Positive(message = "订单金额必须大于0")
-    @JsonProperty("order_amt")
+    @JsonIgnore
     private Long orderAmt;
     
     /**
      * 商品描述
      */
     @NotBlank(message = "商品描述不能为空")
-    @JsonProperty("goods_des")
+    @JsonIgnore
     private String goodsDes;
     
     /**
      * 支付类型（JSAPI-公众号支付，APP-APP支付，MINIAPP-小程序支付）
      */
     @NotBlank(message = "支付类型不能为空")
-    @JsonProperty("pay_type")
+    @JsonIgnore
     private String payType;
     
     /**
      * 用户openid（JSAPI和MINIAPP必填）
      */
-    @JsonProperty("openid")
+    @JsonIgnore
     private String openid;
     
     /**
      * 异步通知地址
      */
-    @JsonProperty("notify_url")
+    @JsonIgnore
     private String notifyUrl;
     
     /**
      * 同步跳转地址
      */
-    @JsonProperty("return_url")
+    @JsonIgnore
     private String returnUrl;
     
     /**
      * 订单有效时间（分钟）
      */
-    @JsonProperty("expire_time")
+    @JsonIgnore
     private Integer expireTime;
     
     /**
      * 附加数据
      */
-    @JsonProperty("attach")
+    @JsonIgnore
     private String attach;
     
     /**
      * 门店ID
      */
-    @JsonProperty("store_id")
+    @JsonIgnore
     private String storeId;
     
     /**
      * 操作员ID
      */
-    @JsonProperty("operator_id")
+    @JsonIgnore
     private String operatorId;
     
     /**
      * 终端号
      */
-    @JsonProperty("terminal_id")
+    @JsonIgnore
     private String terminalId;
+    
+    /**
+     * 获取业务参数Map（用于构建bizContent）
+     */
+    @JsonIgnore
+    public Map<String, Object> getBizContentMap() {
+        Map<String, Object> bizContent = new HashMap<>();
+        if (merId != null) {
+            bizContent.put("merId", merId);
+        }
+        if (orderId != null) {
+            bizContent.put("orderId", orderId);
+        }
+        if (orderAmt != null) {
+            bizContent.put("orderAmt", orderAmt);
+        }
+        if (goodsDes != null) {
+            bizContent.put("goodsDes", goodsDes);
+        }
+        if (payType != null) {
+            bizContent.put("payType", payType);
+        }
+        if (openid != null) {
+            bizContent.put("openid", openid);
+        }
+        if (notifyUrl != null) {
+            bizContent.put("notifyUrl", notifyUrl);
+        }
+        if (returnUrl != null) {
+            bizContent.put("returnUrl", returnUrl);
+        }
+        if (expireTime != null) {
+            bizContent.put("expireTime", expireTime);
+        }
+        if (attach != null) {
+            bizContent.put("attach", attach);
+        }
+        if (storeId != null) {
+            bizContent.put("storeId", storeId);
+        }
+        if (operatorId != null) {
+            bizContent.put("operatorId", operatorId);
+        }
+        if (terminalId != null) {
+            bizContent.put("terminalId", terminalId);
+        }
+        return bizContent;
+    }
     
     public String getMerId() {
         return merId;

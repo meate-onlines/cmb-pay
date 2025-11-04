@@ -1,8 +1,11 @@
 package com.cmbchina.payment.model.request;
 
 import com.cmbchina.payment.model.BaseRequest;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 关闭订单请求
@@ -17,15 +20,30 @@ public class CloseOrderRequest extends BaseRequest {
      * 商户号
      */
     @NotBlank(message = "商户号不能为空")
-    @JsonProperty("mer_id")
+    @JsonIgnore
     private String merId;
     
     /**
      * 商户订单号
      */
     @NotBlank(message = "商户订单号不能为空")
-    @JsonProperty("order_id")
+    @JsonIgnore
     private String orderId;
+    
+    /**
+     * 获取业务参数Map（用于构建bizContent）
+     */
+    @JsonIgnore
+    public Map<String, Object> getBizContentMap() {
+        Map<String, Object> bizContent = new HashMap<>();
+        if (merId != null) {
+            bizContent.put("merId", merId);
+        }
+        if (orderId != null) {
+            bizContent.put("orderId", orderId);
+        }
+        return bizContent;
+    }
     
     public String getMerId() {
         return merId;

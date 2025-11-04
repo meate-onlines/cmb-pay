@@ -1,10 +1,13 @@
 package com.cmbchina.payment.model.request;
 
 import com.cmbchina.payment.model.BaseRequest;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 退款申请请求
@@ -19,21 +22,21 @@ public class RefundRequest extends BaseRequest {
      * 商户号
      */
     @NotBlank(message = "商户号不能为空")
-    @JsonProperty("mer_id")
+    @JsonIgnore
     private String merId;
     
     /**
      * 商户订单号
      */
     @NotBlank(message = "商户订单号不能为空")
-    @JsonProperty("order_id")
+    @JsonIgnore
     private String orderId;
     
     /**
      * 退款订单号
      */
     @NotBlank(message = "退款订单号不能为空")
-    @JsonProperty("refund_order_id")
+    @JsonIgnore
     private String refundOrderId;
     
     /**
@@ -41,26 +44,56 @@ public class RefundRequest extends BaseRequest {
      */
     @NotNull(message = "退款金额不能为空")
     @Positive(message = "退款金额必须大于0")
-    @JsonProperty("refund_amt")
+    @JsonIgnore
     private Long refundAmt;
     
     /**
      * 退款原因
      */
-    @JsonProperty("refund_reason")
+    @JsonIgnore
     private String refundReason;
     
     /**
      * 异步通知地址
      */
-    @JsonProperty("notify_url")
+    @JsonIgnore
     private String notifyUrl;
     
     /**
      * 附加数据
      */
-    @JsonProperty("attach")
+    @JsonIgnore
     private String attach;
+    
+    /**
+     * 获取业务参数Map（用于构建bizContent）
+     */
+    @JsonIgnore
+    public Map<String, Object> getBizContentMap() {
+        Map<String, Object> bizContent = new HashMap<>();
+        if (merId != null) {
+            bizContent.put("merId", merId);
+        }
+        if (orderId != null) {
+            bizContent.put("orderId", orderId);
+        }
+        if (refundOrderId != null) {
+            bizContent.put("refundOrderId", refundOrderId);
+        }
+        if (refundAmt != null) {
+            bizContent.put("refundAmt", refundAmt);
+        }
+        if (refundReason != null) {
+            bizContent.put("refundReason", refundReason);
+        }
+        if (notifyUrl != null) {
+            bizContent.put("notifyUrl", notifyUrl);
+        }
+        if (attach != null) {
+            bizContent.put("attach", attach);
+        }
+        return bizContent;
+    }
     
     public String getMerId() {
         return merId;

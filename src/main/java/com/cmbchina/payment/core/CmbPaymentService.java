@@ -153,12 +153,16 @@ public class CmbPaymentService {
             request.setEncoding(config.getEncoding());
             request.setSignMethod(config.getSignMethod());
             
-            // 生成签名
-            String requestJson = objectMapper.writeValueAsString(request);
-            Map<String, String> requestMap = objectMapper.readValue(requestJson, Map.class);
-            requestMap.remove("sign"); // 移除sign字段
+            // 提取业务参数并序列化为JSON字符串
+            Map<String, Object> bizContentMap = extractBizContent(request);
+            String bizContentJson = objectMapper.writeValueAsString(bizContentMap);
+            request.setBizContent(bizContentJson);
             
-            String signContent = SignatureUtil.getSignContent(requestMap);
+            // 构建签名参数Map（使用小驼峰命名）
+            Map<String, String> signMap = buildSignMap(request);
+            
+            // 生成签名
+            String signContent = SignatureUtil.getSignContent(signMap);
             String sign = SignatureUtil.sm2Sign(signContent, config.getPrivateKey());
             request.setSign(sign);
             
@@ -178,8 +182,9 @@ public class CmbPaymentService {
             headers.set("timestamp", String.valueOf(timestamp));
             headers.set("apisign", apiSign);
             
-            // 发送请求
-            String finalRequestJson = objectMapper.writeValueAsString(request);
+            // 构建最终请求体（使用小驼峰命名）
+            Map<String, Object> requestBody = buildRequestBody(request);
+            String finalRequestJson = objectMapper.writeValueAsString(requestBody);
             HttpEntity<String> entity = new HttpEntity<>(finalRequestJson, headers);
             
             String url = config.getApiUrl() + endpoint;
@@ -197,6 +202,47 @@ public class CmbPaymentService {
             logger.error("执行请求失败: endpoint={}", endpoint, e);
             throw new CmbPaymentException("REQUEST_ERROR", "执行请求失败: " + e.getMessage(), e);
         }
+    }
+    
+    /**
+     * 提取业务参数
+     */
+    private Map<String, Object> extractBizContent(BaseRequest request) {
+        // 通过反射调用getBizContentMap方法
+        try {
+            java.lang.reflect.Method method = request.getClass().getMethod("getBizContentMap");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> bizContent = (Map<String, Object>) method.invoke(request);
+            return bizContent != null ? bizContent : new HashMap<>();
+        } catch (Exception e) {
+            logger.error("提取业务参数失败", e);
+            return new HashMap<>();
+        }
+    }
+    
+    /**
+     * 构建签名参数Map（使用小驼峰命名）
+     */
+    private Map<String, String> buildSignMap(BaseRequest request) {
+        Map<String, String> signMap = new HashMap<>();
+        signMap.put("version", request.getVersion());
+        signMap.put("encoding", request.getEncoding());
+        signMap.put("signMethod", request.getSignMethod());
+        signMap.put("bizContent", request.getBizContent());
+        return signMap;
+    }
+    
+    /**
+     * 构建请求体（使用小驼峰命名）
+     */
+    private Map<String, Object> buildRequestBody(BaseRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("version", request.getVersion());
+        body.put("encoding", request.getEncoding());
+        body.put("signMethod", request.getSignMethod());
+        body.put("bizContent", request.getBizContent());
+        body.put("sign", request.getSign());
+        return body;
     }
     
     /**

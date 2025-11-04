@@ -1,7 +1,6 @@
 package com.cmbchina.payment.model.response;
 
 import com.cmbchina.payment.model.BaseResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 对账单响应
@@ -15,37 +14,31 @@ public class StatementResponse extends BaseResponse {
     /**
      * 商户号
      */
-    @JsonProperty("mer_id")
     private String merId;
     
     /**
      * 账单日期
      */
-    @JsonProperty("bill_date")
     private String billDate;
     
     /**
      * 账单类型
      */
-    @JsonProperty("bill_type")
     private String billType;
     
     /**
      * 下载地址
      */
-    @JsonProperty("download_url")
     private String downloadUrl;
     
     /**
      * 文件大小（字节）
      */
-    @JsonProperty("file_size")
     private Long fileSize;
     
     /**
      * 记录总数
      */
-    @JsonProperty("record_count")
     private Integer recordCount;
     
     public String getMerId() {

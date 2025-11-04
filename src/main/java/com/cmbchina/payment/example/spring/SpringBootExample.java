@@ -201,7 +201,8 @@ class PaymentController {
                 NotifyResponse notifyResponse = paymentClient.handleNotify(notifyData);
                 
                 // 处理业务逻辑
-                if ("SUCCESS".equals(notifyResponse.getOrderStat())) {
+                if ("SUCCESS".equals(notifyResponse.getReturnCode()) && 
+                    "SUCCESS".equals(notifyResponse.getResultCode())) {
                     // 支付成功，更新订单状态
                     updateOrderStatus(notifyResponse.getOrderId(), "PAID");
                 }

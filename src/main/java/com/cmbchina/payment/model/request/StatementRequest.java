@@ -1,8 +1,11 @@
 package com.cmbchina.payment.model.request;
 
 import com.cmbchina.payment.model.BaseRequest;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 对账单请求
@@ -17,21 +20,39 @@ public class StatementRequest extends BaseRequest {
      * 商户号
      */
     @NotBlank(message = "商户号不能为空")
-    @JsonProperty("mer_id")
+    @JsonIgnore
     private String merId;
     
     /**
      * 账单日期（格式：yyyyMMdd）
      */
     @NotBlank(message = "账单日期不能为空")
-    @JsonProperty("bill_date")
+    @JsonIgnore
     private String billDate;
     
     /**
      * 账单类型（ALL-全部，SUCCESS-成功，REFUND-退款）
      */
-    @JsonProperty("bill_type")
+    @JsonIgnore
     private String billType = "ALL";
+    
+    /**
+     * 获取业务参数Map（用于构建bizContent）
+     */
+    @JsonIgnore
+    public Map<String, Object> getBizContentMap() {
+        Map<String, Object> bizContent = new HashMap<>();
+        if (merId != null) {
+            bizContent.put("merId", merId);
+        }
+        if (billDate != null) {
+            bizContent.put("billDate", billDate);
+        }
+        if (billType != null) {
+            bizContent.put("billType", billType);
+        }
+        return bizContent;
+    }
     
     public String getMerId() {
         return merId;
