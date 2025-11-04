@@ -3,8 +3,6 @@ package com.cmbchina.payment.model.request;
 import com.cmbchina.payment.model.BaseRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.util.HashMap;
 import java.util.Map;
