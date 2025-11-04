@@ -38,14 +38,14 @@ public class PaymentRequest extends BaseRequest {
     @NotNull(message = "订单金额不能为空")
     @Positive(message = "订单金额必须大于0")
     @JsonIgnore
-    private Long orderAmt;
+    private String txnAmt;
     
     /**
      * 商品描述
      */
     @NotBlank(message = "商品描述不能为空")
     @JsonIgnore
-    private String goodsDes;
+    private String body;
     
     /**
      * 付款码
@@ -92,8 +92,8 @@ public class PaymentRequest extends BaseRequest {
         Map<String, Object> bizContent = new HashMap<>();
         if (merId != null) bizContent.put("merId", merId);
         if (orderId != null) bizContent.put("orderId", orderId);
-        if (orderAmt != null) bizContent.put("orderAmt", orderAmt);
-        if (goodsDes != null) bizContent.put("goodsDes", goodsDes);
+        if (txnAmt != null) bizContent.put("txnAmt", txnAmt);
+        if (body != null) bizContent.put("body", body);
         if (authCode != null) bizContent.put("authCode", authCode);
         if (notifyUrl != null) bizContent.put("notifyUrl", notifyUrl);
         if (attach != null) bizContent.put("attach", attach);
@@ -119,20 +119,20 @@ public class PaymentRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public Long getOrderAmt() {
-        return orderAmt;
+    public String getTxnAmt() {
+        return txnAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
-        this.orderAmt = orderAmt;
+    public void setTxnAmt(String txnAmt) {
+        this.txnAmt = txnAmt;
     }
     
-    public String getGoodsDes() {
-        return goodsDes;
+    public String getBody() {
+        return body;
     }
     
-    public void setGoodsDes(String goodsDes) {
-        this.goodsDes = goodsDes;
+    public void setBody(String body) {
+        this.body = body;
     }
     
     public String getAuthCode() {

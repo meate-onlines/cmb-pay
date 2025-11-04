@@ -34,7 +34,7 @@ public class WechatUnifiedOrderResponse extends BaseResponse {
     /**
      * 订单金额（分）
      */
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 支付参数（用于调起支付）
@@ -98,11 +98,11 @@ public class WechatUnifiedOrderResponse extends BaseResponse {
         this.orderStat = orderStat;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     

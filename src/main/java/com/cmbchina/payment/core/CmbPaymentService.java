@@ -233,7 +233,7 @@ public class CmbPaymentService {
         signMap.put("version", request.getVersion());
         signMap.put("encoding", request.getEncoding());
         signMap.put("signMethod", request.getSignMethod());
-        signMap.put("bizContent", request.getBizContent());
+        signMap.put("biz_content", request.getBizContent());
         return signMap;
     }
 
@@ -242,7 +242,7 @@ public class CmbPaymentService {
         body.put("version", request.getVersion());
         body.put("encoding", request.getEncoding());
         body.put("signMethod", request.getSignMethod());
-        body.put("bizContent", request.getBizContent());
+        body.put("biz_content", request.getBizContent());
         body.put("sign", request.getSign());
         return body;
     }

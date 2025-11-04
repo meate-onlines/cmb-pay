@@ -4,7 +4,6 @@ import com.cmbchina.payment.model.BaseRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +42,8 @@ public class RefundRequest extends BaseRequest {
      * 退款金额（分）
      */
     @NotNull(message = "退款金额不能为空")
-    @Positive(message = "退款金额必须大于0")
     @JsonIgnore
-    private Long refundAmt;
+    private String refundAmt;
     
     /**
      * 退款原因
@@ -105,11 +103,11 @@ public class RefundRequest extends BaseRequest {
         this.refundOrderId = refundOrderId;
     }
     
-    public Long getRefundAmt() {
+    public String getRefundAmt() {
         return refundAmt;
     }
     
-    public void setRefundAmt(Long refundAmt) {
+    public void setRefundAmt(String refundAmt) {
         this.refundAmt = refundAmt;
     }
     

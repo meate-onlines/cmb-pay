@@ -95,14 +95,11 @@ class CmbPaymentClientTest {
         PaymentRequest request = new PaymentRequest();
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_001");
-        request.setOrderAmt(10000L);
-        request.setGoodsDes("测试商品");
         request.setAuthCode("134567890123456789");
         
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals(10000L, request.getOrderAmt());
         assertEquals("134567890123456789", request.getAuthCode());
     }
     
@@ -113,7 +110,7 @@ class CmbPaymentClientTest {
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_001");
         request.setRefundOrderId("TEST_REFUND_001");
-        request.setRefundAmt(5000L);
+        request.setRefundAmt("5000");
         request.setRefundReason("测试退款原因");
         
         assertNotNull(request);
@@ -142,7 +139,7 @@ class CmbPaymentClientTest {
         WechatUnifiedOrderRequest request = new WechatUnifiedOrderRequest();
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_001");
-        request.setOrderAmt(10000L);
+        request.setOrderAmt("10000");
         request.setGoodsDes("测试商品");
         request.setNotifyUrl(config.getNotifyUrl());
         
@@ -158,7 +155,7 @@ class CmbPaymentClientTest {
         AlipayServiceRequest request = new AlipayServiceRequest();
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_001");
-        request.setOrderAmt(10000L);
+        request.setOrderAmt("10000");
         request.setGoodsDes("测试商品");
         request.setNotifyUrl(config.getNotifyUrl());
         

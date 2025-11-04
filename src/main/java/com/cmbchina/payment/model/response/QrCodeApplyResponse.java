@@ -44,7 +44,7 @@ public class QrCodeApplyResponse extends BaseResponse {
     /**
      * 订单金额（分）
      */
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 订单创建时间
@@ -104,11 +104,11 @@ public class QrCodeApplyResponse extends BaseResponse {
         this.orderStat = orderStat;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     

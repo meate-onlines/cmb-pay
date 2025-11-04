@@ -34,12 +34,12 @@ public class NotifyResponse extends BaseResponse {
     /**
      * 订单金额（分）
      */
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 实付金额（分）
      */
-    private Long payAmt;
+    private String payAmt;
     
     /**
      * 支付方式
@@ -108,19 +108,19 @@ public class NotifyResponse extends BaseResponse {
         this.orderStat = orderStat;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     
-    public Long getPayAmt() {
+    public String getPayAmt() {
         return payAmt;
     }
     
-    public void setPayAmt(Long payAmt) {
+    public void setPayAmt(String payAmt) {
         this.payAmt = payAmt;
     }
     

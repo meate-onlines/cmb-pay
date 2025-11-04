@@ -34,7 +34,7 @@ public class RefundResponse extends BaseResponse {
     /**
      * 退款金额（分）
      */
-    private Long refundAmt;
+    private String refundAmt;
     
     /**
      * 退款时间
@@ -83,11 +83,11 @@ public class RefundResponse extends BaseResponse {
         this.refundStat = refundStat;
     }
     
-    public Long getRefundAmt() {
+    public String getRefundAmt() {
         return refundAmt;
     }
     
-    public void setRefundAmt(Long refundAmt) {
+    public void setRefundAmt(String refundAmt) {
         this.refundAmt = refundAmt;
     }
     

@@ -34,17 +34,17 @@ public class OrderQueryResponse extends BaseResponse {
     /**
      * 订单金额（分）
      */
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 实付金额（分）
      */
-    private Long payAmt;
+    private String payAmt;
     
     /**
      * 优惠金额（分）
      */
-    private Long discountAmt;
+    private String discountAmt;
     
     /**
      * 支付方式
@@ -113,27 +113,27 @@ public class OrderQueryResponse extends BaseResponse {
         this.orderStat = orderStat;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     
-    public Long getPayAmt() {
+    public String getPayAmt() {
         return payAmt;
     }
     
-    public void setPayAmt(Long payAmt) {
+    public void setPayAmt(String payAmt) {
         this.payAmt = payAmt;
     }
     
-    public Long getDiscountAmt() {
+    public String getDiscountAmt() {
         return discountAmt;
     }
     
-    public void setDiscountAmt(Long discountAmt) {
+    public void setDiscountAmt(String discountAmt) {
         this.discountAmt = discountAmt;
     }
     

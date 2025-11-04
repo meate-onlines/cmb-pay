@@ -116,7 +116,7 @@ public class PaymentExample {
         refundRequest.setMerId("your_merchant_id");
         refundRequest.setOrderId("ORDER_123456789");
         refundRequest.setRefundOrderId("REFUND_" + System.currentTimeMillis());
-        refundRequest.setRefundAmt(5000L); // 退款50.00元
+        refundRequest.setRefundAmt("5000"); // 退款50.00元
         refundRequest.setRefundReason("用户申请退款");
         
         try {
@@ -142,7 +142,7 @@ public class PaymentExample {
         WechatUnifiedOrderRequest request = new WechatUnifiedOrderRequest();
         request.setMerId("your_merchant_id");
         request.setOrderId("WECHAT_ORDER_" + System.currentTimeMillis());
-        request.setOrderAmt(20000L); // 200.00元
+        request.setOrderAmt("20000"); // 200.00元
         request.setGoodsDes("微信支付测试商品");
         request.setPayType("JSAPI"); // 公众号支付
         request.setOpenid("user_openid_here");

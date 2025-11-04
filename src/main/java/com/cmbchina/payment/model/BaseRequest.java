@@ -38,7 +38,7 @@ public abstract class BaseRequest {
     /**
      * 业务参数（JSON字符串）
      */
-    @JsonProperty("bizContent")
+    @JsonProperty("biz_content")
     private String bizContent;
     
     /**

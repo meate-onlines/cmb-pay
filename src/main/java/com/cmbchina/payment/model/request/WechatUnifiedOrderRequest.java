@@ -4,7 +4,6 @@ import com.cmbchina.payment.model.BaseRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +35,8 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
      * 订单金额（分）
      */
     @NotNull(message = "订单金额不能为空")
-    @Positive(message = "订单金额必须大于0")
     @JsonIgnore
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 商品描述
@@ -140,11 +138,11 @@ public class WechatUnifiedOrderRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     

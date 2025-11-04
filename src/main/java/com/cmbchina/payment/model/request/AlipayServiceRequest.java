@@ -34,7 +34,7 @@ public class AlipayServiceRequest extends BaseRequest {
      * 订单金额（分）
      */
     @JsonIgnore
-    private Long orderAmt;
+    private String orderAmt;
     
     /**
      * 商品描述
@@ -99,11 +99,11 @@ public class AlipayServiceRequest extends BaseRequest {
         this.orderId = orderId;
     }
     
-    public Long getOrderAmt() {
+    public String getOrderAmt() {
         return orderAmt;
     }
     
-    public void setOrderAmt(Long orderAmt) {
+    public void setOrderAmt(String orderAmt) {
         this.orderAmt = orderAmt;
     }
     
