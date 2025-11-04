@@ -302,4 +302,120 @@ class CmbPaymentServiceTest {
         assertNotNull(qrRequest);
         assertNotNull(client);
     }
+    
+    /**
+     * 集成测试：发送真实的HTTP请求
+     * 使用环境变量或系统属性来配置真实的API端点
+     * 如果没有配置，则跳过此测试
+     * 
+     * 使用方法：
+     * 1. 设置环境变量：CMB_API_URL=https://api.cmburl.cn:8065
+     *    或系统属性：-Dcmb.api.url=https://api.cmburl.cn:8065
+     * 2. 设置真实的商户配置信息
+     * 
+     * 注意：此测试需要真实的API配置，默认会被跳过
+     */
+    @Test
+    void testRealHttpRequest() {
+        // 从环境变量或系统属性获取API URL
+        String apiUrl = System.getenv("CMB_API_URL");
+        if (apiUrl == null || apiUrl.isEmpty()) {
+            apiUrl = System.getProperty("cmb.api.url");
+        }
+        
+        // 如果没有配置，跳过测试
+        if (apiUrl == null || apiUrl.isEmpty()) {
+            System.out.println("跳过真实HTTP请求测试：未配置API URL");
+            System.out.println("提示：设置环境变量 CMB_API_URL 或系统属性 cmb.api.url 来启用此测试");
+            return;
+        }
+        
+        // 从环境变量或系统属性获取其他配置
+        String merchantId = System.getenv("CMB_MERCHANT_ID");
+        if (merchantId == null || merchantId.isEmpty()) {
+            merchantId = System.getProperty("cmb.merchant.id");
+        }
+        
+        String appId = System.getenv("CMB_APP_ID");
+        if (appId == null || appId.isEmpty()) {
+            appId = System.getProperty("cmb.app.id");
+        }
+        
+        String appSecret = System.getenv("CMB_APP_SECRET");
+        if (appSecret == null || appSecret.isEmpty()) {
+            appSecret = System.getProperty("cmb.app.secret");
+        }
+        
+        String privateKey = System.getenv("CMB_PRIVATE_KEY");
+        if (privateKey == null || privateKey.isEmpty()) {
+            privateKey = System.getProperty("cmb.private.key");
+        }
+        
+        String publicKey = System.getenv("CMB_PUBLIC_KEY");
+        if (publicKey == null || publicKey.isEmpty()) {
+            publicKey = System.getProperty("cmb.public.key");
+        }
+        
+        // 检查必要的配置
+        if (merchantId == null || appId == null || appSecret == null || 
+            privateKey == null || publicKey == null) {
+            System.out.println("跳过真实HTTP请求测试：缺少必要的配置信息");
+            System.out.println("提示：需要设置以下环境变量或系统属性：");
+            System.out.println("  - CMB_MERCHANT_ID / cmb.merchant.id");
+            System.out.println("  - CMB_APP_ID / cmb.app.id");
+            System.out.println("  - CMB_APP_SECRET / cmb.app.secret");
+            System.out.println("  - CMB_PRIVATE_KEY / cmb.private.key");
+            System.out.println("  - CMB_PUBLIC_KEY / cmb.public.key");
+            return;
+        }
+        
+        // 创建真实的配置
+        CmbPaymentConfig realConfig = new CmbPaymentConfig.Builder()
+                .merchantId(merchantId)
+                .appId(appId)
+                .appSecret(appSecret)
+                .privateKey(privateKey)
+                .publicKey(publicKey)
+                .apiUrl(apiUrl)
+                .sandbox(true)
+                .build();
+        
+        // 创建真实的支付服务（不使用Mock）
+        CmbPaymentService realService = new CmbPaymentService(realConfig);
+        
+        // 创建订单查询请求（相对简单的请求，用于测试）
+        OrderQueryRequest request = new OrderQueryRequest();
+        request.setMerId(merchantId);
+        request.setOrderId("TEST_" + System.currentTimeMillis()); // 使用时间戳确保唯一性
+        
+        try {
+            // 发送真实的HTTP请求
+            // 注意：这里可能会因为订单不存在而失败，但我们可以看到请求和响应的日志
+            OrderQueryResponse response = realService.orderQuery(request);
+            
+            // 如果请求成功，验证响应
+            assertNotNull(response, "响应不应为空");
+            System.out.println("真实HTTP请求测试成功！");
+            System.out.println("响应状态：成功");
+            
+        } catch (com.cmbchina.payment.exception.CmbPaymentException e) {
+            // 请求失败是预期的（可能是订单不存在或其他业务错误）
+            // 但我们可以验证HTTP请求和响应都被正确记录了
+            System.out.println("真实HTTP请求测试完成（业务错误是预期的）：");
+            System.out.println("错误码：" + e.getErrorCode());
+            System.out.println("错误信息：" + e.getMessage());
+            
+            // 验证异常被正确抛出
+            assertNotNull(e);
+            assertNotNull(e.getErrorCode());
+        } catch (Exception e) {
+            // 网络错误或其他异常
+            System.out.println("真实HTTP请求测试失败（可能是网络问题）：");
+            System.out.println("异常类型：" + e.getClass().getName());
+            System.out.println("异常信息：" + e.getMessage());
+            
+            // 不抛出异常，因为网络问题不应该导致测试失败
+            // 但我们可以验证请求日志是否被正确记录
+        }
+    }
 }

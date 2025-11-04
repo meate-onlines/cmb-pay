@@ -73,15 +73,15 @@ public class HttpLoggingUtil {
             sb.append("(empty)").append(LINE_SEPARATOR);
         }
         
-        // 请求体原始字节（十六进制）
-        sb.append("Request Body (Raw Bytes - Hex):").append(LINE_SEPARATOR);
-        if (body != null && body.length > 0) {
-            sb.append(bytesToHex(body)).append(LINE_SEPARATOR);
-        } else {
-            sb.append("(empty)").append(LINE_SEPARATOR);
-        }
+        // // 请求体原始字节（十六进制）
+        // sb.append("Request Body (Raw Bytes - Hex):").append(LINE_SEPARATOR);
+        // if (body != null && body.length > 0) {
+        //     sb.append(bytesToHex(body)).append(LINE_SEPARATOR);
+        // } else {
+        //     sb.append("(empty)").append(LINE_SEPARATOR);
+        // }
         
-        sb.append(SEPARATOR).append(LINE_SEPARATOR);
+        // sb.append(SEPARATOR).append(LINE_SEPARATOR);
         
         logger.info(sb.toString());
     }
@@ -132,15 +132,15 @@ public class HttpLoggingUtil {
             sb.append("(empty)").append(LINE_SEPARATOR);
         }
         
-        // 响应体原始字节（十六进制）
-        sb.append("Response Body (Raw Bytes - Hex):").append(LINE_SEPARATOR);
-        if (body != null && body.length > 0) {
-            sb.append(bytesToHex(body)).append(LINE_SEPARATOR);
-        } else {
-            sb.append("(empty)").append(LINE_SEPARATOR);
-        }
+        // // 响应体原始字节（十六进制）
+        // sb.append("Response Body (Raw Bytes - Hex):").append(LINE_SEPARATOR);
+        // if (body != null && body.length > 0) {
+        //     sb.append(bytesToHex(body)).append(LINE_SEPARATOR);
+        // } else {
+        //     sb.append("(empty)").append(LINE_SEPARATOR);
+        // }
         
-        sb.append(SEPARATOR).append(LINE_SEPARATOR);
+        // sb.append(SEPARATOR).append(LINE_SEPARATOR);
         
         logger.info(sb.toString());
     }
