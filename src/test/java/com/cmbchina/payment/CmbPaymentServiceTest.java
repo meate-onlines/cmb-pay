@@ -108,14 +108,14 @@ class CmbPaymentServiceTest {
         RefundRequest request = new RefundRequest();
         request.setMerId("test_merchant_id");
         request.setOrderId("TEST_ORDER_001");
-        request.setRefundOrderId("TEST_REFUND_001");
+        request.setOrderId("TEST_REFUND_001");
         request.setRefundAmt("5000");
         request.setRefundReason("测试退款");
         
         assertNotNull(request);
         assertEquals("test_merchant_id", request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals("TEST_REFUND_001", request.getRefundOrderId());
+        assertEquals("TEST_REFUND_001", request.getOrderId());
         assertEquals("5000", request.getRefundAmt());
         assertEquals("测试退款", request.getRefundReason());
     }
@@ -165,22 +165,22 @@ class CmbPaymentServiceTest {
     void testCloseOrderRequest() {
         CloseOrderRequest request = new CloseOrderRequest();
         request.setMerId("test_merchant_id");
-        request.setOrderId("TEST_ORDER_001");
+        request.setOrigOrderId("TEST_ORDER_001");
         
         assertNotNull(request);
         assertEquals("test_merchant_id", request.getMerId());
-        assertEquals("TEST_ORDER_001", request.getOrderId());
+        assertEquals("TEST_ORDER_001", request.getOrigOrderId());
     }
     
     @Test
     void testRefundQueryRequest() {
         RefundQueryRequest request = new RefundQueryRequest();
         request.setMerId("test_merchant_id");
-        request.setRefundOrderId("TEST_REFUND_001");
+        request.setOrderId("TEST_REFUND_001");
         
         assertNotNull(request);
         assertEquals("test_merchant_id", request.getMerId());
-        assertEquals("TEST_REFUND_001", request.getRefundOrderId());
+        assertEquals("TEST_REFUND_001", request.getOrderId());
     }
     
     @Test

@@ -6,6 +6,8 @@ import com.cmbchina.payment.model.request.*;
 import com.cmbchina.payment.model.response.*;
 import com.cmbchina.payment.exception.CmbPaymentException;
 
+import java.util.Map;
+
 /**
  * 招商银行支付客户端 - 主要入口类
  * 
@@ -155,5 +157,21 @@ public class CmbPaymentClient {
      */
     public NotifyResponse handleNotify(String notifyData) throws CmbPaymentException {
         return paymentService.handleNotify(notifyData);
+    }
+
+    /**
+     * 构建回调通知成功返回
+     * @return 回调通知成功返回
+     */
+    public Map<String, String> buildNotifySuccessResponse() {
+        return paymentService.buildNotifyResponse("SUCCESS");
+    }
+
+    /**
+     * 构建回调通知失败返回
+     * @return 回调通知失败返回
+     */
+    public Map<String, String> buildNotifyFailedResponse() {
+        return paymentService.buildNotifyResponse("FAIL");
     }
 }

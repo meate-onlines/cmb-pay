@@ -121,7 +121,7 @@ public class PaymentExample {
         RefundRequest refundRequest = new RefundRequest();
         refundRequest.setMerId("your_merchant_id");
         refundRequest.setOrderId("ORDER_123456789");
-        refundRequest.setRefundOrderId("REFUND_" + System.currentTimeMillis());
+        refundRequest.setOrderId("REFUND_" + System.currentTimeMillis());
         refundRequest.setRefundAmt("5000"); // 退款50.00元
         refundRequest.setRefundReason("用户申请退款");
         
@@ -129,7 +129,7 @@ public class PaymentExample {
             RefundResponse response = client.refund(refundRequest);
             
             if (response.isSuccess()) {
-                System.out.println("退款状态: " + response.getRefundStat());
+                System.out.println("退款状态: " + response.getRefundState());
                 System.out.println("退款金额: " + response.getRefundAmt());
             }
         } catch (CmbPaymentException e) {

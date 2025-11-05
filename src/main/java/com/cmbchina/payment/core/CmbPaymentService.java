@@ -131,6 +131,24 @@ public class CmbPaymentService {
             return false;
         }
     }
+
+    /**
+     * 构建回调通知返回
+     * @param returnCode 返回码
+     * @return 回调通知返回
+     */
+    public Map<String, String> buildNotifyResponse(String returnCode) {
+        Map<String, String> response = new HashMap<>();
+        //设置响应数据
+        response.put("version", config.getVersion());//版本号，固定为0.0.1(必传)
+        response.put("encoding", config.getEncoding());//编码方式，固定为UTF-8(必传)
+        response.put("signMethod", config.getSignMethod());//签名方法，固定为02，国密
+        response.put("returnCode", returnCode);//返回码，SUCCESS/FAIL
+        response.put("respCode", returnCode.equals("SUCCESS") ? "SUCCESS" : "FAIL");//响应码，成功为SUCCESS，失败为FAIL
+        response.put("respMsg", returnCode.equals("SUCCESS") ? "SUCCESS" : "FAIL");//应答信息，成功为SUCCESS，失败为FAIL
+        response.put("sign", SignatureUtil.sm2Sign(SignatureUtil.getSignContent(response), config.getPrivateKey()));//签名
+        return response;
+    }
     
     /**
      * 处理回调通知
