@@ -35,6 +35,11 @@ public class StatementRequest extends BaseRequest {
      */
     @JsonIgnore
     private String billType = "ALL";
+    /**
+     * 行内业务网下载账单须上送：inner，不上送此字段默认通过互联网下载
+     */
+    @JsonIgnore
+    private String urlType;
     
     /**
      * 获取业务参数Map（用于构建bizContent）
@@ -45,6 +50,7 @@ public class StatementRequest extends BaseRequest {
         if (merId != null) bizContent.put("merId", merId);
         if (billDate != null) bizContent.put("billDate", billDate);
         if (billType != null) bizContent.put("billType", billType);
+        if (urlType != null) bizContent.put("urlType", urlType);
         return bizContent;
     }
     
@@ -70,5 +76,13 @@ public class StatementRequest extends BaseRequest {
     
     public void setBillType(String billType) {
         this.billType = billType;
+    }
+
+    public String getUrlType() {
+        return urlType;
+    }
+    
+    public void setUrlType(String urlType) {
+        this.urlType = urlType;
     }
 }

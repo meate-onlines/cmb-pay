@@ -1,6 +1,7 @@
 package com.cmbchina.payment.model.response;
 
 import com.cmbchina.payment.model.BaseResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 对账单响应
@@ -12,34 +13,18 @@ import com.cmbchina.payment.model.BaseResponse;
 public class StatementResponse extends BaseResponse {
     
     /**
-     * 商户号
+     * 商户号（returnCode为SUCCESS时返回）
+     * 请求报文中的商户号
      */
+    @JsonProperty("merId")
     private String merId;
     
     /**
-     * 账单日期
+     * 账单下载地址（returnCode或respCode为SUCCESS时返回）
+     * 对账单下载URL
      */
-    private String billDate;
-    
-    /**
-     * 账单类型
-     */
-    private String billType;
-    
-    /**
-     * 下载地址
-     */
-    private String downloadUrl;
-    
-    /**
-     * 文件大小（字节）
-     */
-    private Long fileSize;
-    
-    /**
-     * 记录总数
-     */
-    private Integer recordCount;
+    @JsonProperty("fileDownloadUrl")
+    private String fileDownloadUrl;
     
     public String getMerId() {
         return merId;
@@ -49,43 +34,11 @@ public class StatementResponse extends BaseResponse {
         this.merId = merId;
     }
     
-    public String getBillDate() {
-        return billDate;
+    public String getFileDownloadUrl() {
+        return fileDownloadUrl;
     }
     
-    public void setBillDate(String billDate) {
-        this.billDate = billDate;
-    }
-    
-    public String getBillType() {
-        return billType;
-    }
-    
-    public void setBillType(String billType) {
-        this.billType = billType;
-    }
-    
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
-    
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
-    }
-    
-    public Long getFileSize() {
-        return fileSize;
-    }
-    
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
-    
-    public Integer getRecordCount() {
-        return recordCount;
-    }
-    
-    public void setRecordCount(Integer recordCount) {
-        this.recordCount = recordCount;
+    public void setFileDownloadUrl(String fileDownloadUrl) {
+        this.fileDownloadUrl = fileDownloadUrl;
     }
 }

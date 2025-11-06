@@ -160,6 +160,17 @@ public class CmbPaymentClient {
     }
 
     /**
+     * 退款回调通知
+     * 
+     * @param notifyData 回调通知数据
+     * @return 退款回调通知响应
+     * @throws CmbPaymentException 支付异常
+     */
+    public RefundCallbackResponse refundCallback(String notifyData) throws CmbPaymentException {
+        return paymentService.handleRefundNotify(notifyData);
+    }
+
+    /**
      * 构建回调通知成功返回
      * @return 回调通知成功返回
      */

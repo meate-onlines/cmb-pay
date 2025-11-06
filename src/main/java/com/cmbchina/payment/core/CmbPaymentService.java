@@ -162,7 +162,20 @@ public class CmbPaymentService {
             throw new CmbPaymentException("NOTIFY_PARSE_ERROR", "处理回调通知失败", e);
         }
     }
-    
+
+    /**
+     * 处理退款回调通知
+     */
+    public RefundCallbackResponse handleRefundNotify(String notifyData) throws CmbPaymentException {
+        try {
+            Map<String, String> notifyMap = SignatureUtil.parseQueryString(notifyData);
+            return objectMapper.convertValue(notifyMap, RefundCallbackResponse.class);
+        } catch (Exception e) {
+            logger.error("处理退款回调通知失败", e);
+            throw new CmbPaymentException("REFUND_NOTIFY_PARSE_ERROR", "处理退款回调通知失败", e);
+        }
+    }
+
     /**
      * 执行请求
      */
