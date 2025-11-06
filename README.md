@@ -23,7 +23,7 @@
 #### Gradle
 ```gradle
 dependencies {
-    implementation 'com.github.meate-onlines:cmb-pay:1.0.0'
+    implementation 'com.github.meate-onlines:cmb-pay:1.0.2'
 }
 ```
 
@@ -32,7 +32,7 @@ dependencies {
 <dependency>
     <groupId>com.github.meate-onlines</groupId>
     <artifactId>cmb-pay</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -108,7 +108,7 @@ request.setTxnAmt("10000"); // 100.00元，单位：分
 request.setBody("测试商品");
 request.setNotifyUrl("https://your-domain.com/notify");
 request.setUserId("your_user_id"); // 收银员ID
-request.setPayValidTime("30"); // 30分钟过期
+request.setPayValidTime("300"); // 300秒过期
 
 try {
     QrCodeApplyResponse response = client.qrCodeApply(request);
@@ -534,4 +534,4 @@ MIT License
 
 ## 联系方式
 
-如有问题，请联系开发团队或提交Issue。
+如有问题，请联系lggooef@gmail.com或提交Issue。
