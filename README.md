@@ -23,7 +23,7 @@
 #### Gradle
 ```gradle
 dependencies {
-    implementation 'com.github.meate-onlines:cmb-pay:1.0.2'
+    implementation 'com.github.meate-onlines:cmb-pay:1.0.3'
 }
 ```
 
@@ -32,7 +32,7 @@ dependencies {
 <dependency>
     <groupId>com.github.meate-onlines</groupId>
     <artifactId>cmb-pay</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
