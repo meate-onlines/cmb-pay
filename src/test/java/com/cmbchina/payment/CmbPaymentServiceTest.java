@@ -230,6 +230,49 @@ class CmbPaymentServiceTest {
     }
     
     @Test
+    void testHandleNotifyWithRealBizContent() {
+        // 使用用户提供的实际 biz_content 值进行测试
+        String bizContent = "{\"merId\":\"3089991727302TE\",\"orderId\":\"P202511102128161\",\"cmbOrderId\":\"100425111021281694103779\",\"userId\":\"V080708212\",\"txnAmt\":\"9\",\"currencyCode\":\"156\",\"payType\":\"ZF\",\"openId\":\"2088412343991381\",\"txnTime\":\"20251110212816\",\"endDate\":\"20251110\",\"endTime\":\"212838\",\"dscAmt\":\"0\",\"thirdOrderId\":\"552025111022001491381438889191\",\"payBank\":\"ALIPAYACCOUNT\",\"buyerLogonId\":\"183****9668\",\"payChannel\":\"U\"}";
+        
+        // 构建通知数据，biz_content 需要 URL 编码
+        try {
+            String encodedBizContent = java.net.URLEncoder.encode(bizContent, "UTF-8");
+            String notifyData = "biz_content=" + encodedBizContent + "&version=0.0.1&encoding=UTF-8";
+            
+            // 测试解析
+            NotifyResponse response = paymentService.handleNotify(notifyData);
+            
+            // 验证解析结果
+            assertNotNull(response, "响应不应为空");
+            assertEquals("3089991727302TE", response.getMerId(), "商户号应匹配");
+            assertEquals("P202511102128161", response.getOrderId(), "订单号应匹配");
+            assertEquals("100425111021281694103779", response.getCmbOrderId(), "平台订单号应匹配");
+            assertEquals("V080708212", response.getUserId(), "用户ID应匹配");
+            assertEquals("9", response.getTxnAmt(), "交易金额应匹配");
+            assertEquals("156", response.getCurrencyCode(), "币种应匹配");
+            assertEquals("ZF", response.getPayType(), "支付方式应匹配");
+            assertEquals("2088412343991381", response.getOpenId(), "OpenId应匹配");
+            assertEquals("20251110212816", response.getTxnTime(), "交易时间应匹配");
+            assertEquals("20251110", response.getEndDate(), "完成日期应匹配");
+            assertEquals("212838", response.getEndTime(), "完成时间应匹配");
+            assertEquals("0", response.getDscAmt(), "优惠金额应匹配");
+            assertEquals("552025111022001491381438889191", response.getThirdOrderId(), "第三方订单号应匹配");
+            assertEquals("ALIPAYACCOUNT", response.getPayBank(), "付款银行应匹配");
+            assertEquals("183****9668", response.getBuyerLogonId(), "买家登录ID应匹配");
+            
+            System.out.println("测试成功！成功解析了 biz_content JSON 字符串");
+            System.out.println("商户号: " + response.getMerId());
+            System.out.println("订单号: " + response.getOrderId());
+            System.out.println("平台订单号: " + response.getCmbOrderId());
+            System.out.println("交易金额: " + response.getTxnAmt());
+            System.out.println("支付方式: " + response.getPayType());
+            
+        } catch (Exception e) {
+            fail("解析 biz_content 失败: " + e.getMessage(), e);
+        }
+    }
+    
+    @Test
     void testVerifyNotifyWithMissingSign() {
         String notifyDataWithoutSign = "mer_id=test_merchant&order_id=TEST_001";
         

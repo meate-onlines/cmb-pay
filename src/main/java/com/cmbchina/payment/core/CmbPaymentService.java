@@ -156,7 +156,12 @@ public class CmbPaymentService {
     public NotifyResponse handleNotify(String notifyData) throws CmbPaymentException {
         try {
             Map<String, String> notifyMap = SignatureUtil.parseQueryString(notifyData);
-            return objectMapper.convertValue(notifyMap.get("biz_content"), NotifyResponse.class);
+            String bizContent = notifyMap.get("biz_content");
+            if (bizContent == null) {
+                throw new CmbPaymentException("NOTIFY_PARSE_ERROR", "回调通知缺少biz_content字段");
+            }
+            // biz_content是JSON字符串，需要使用readValue解析
+            return objectMapper.readValue(bizContent, NotifyResponse.class);
         } catch (Exception e) {
             logger.error("处理回调通知失败", e);
             throw new CmbPaymentException("NOTIFY_PARSE_ERROR", "处理回调通知失败", e);
@@ -169,7 +174,12 @@ public class CmbPaymentService {
     public RefundCallbackResponse handleRefundNotify(String notifyData) throws CmbPaymentException {
         try {
             Map<String, String> notifyMap = SignatureUtil.parseQueryString(notifyData);
-            return objectMapper.convertValue(notifyMap.get("biz_content"), RefundCallbackResponse.class);
+            String bizContent = notifyMap.get("biz_content");
+            if (bizContent == null) {
+                throw new CmbPaymentException("REFUND_NOTIFY_PARSE_ERROR", "退款回调通知缺少biz_content字段");
+            }
+            // biz_content是JSON字符串，需要使用readValue解析
+            return objectMapper.readValue(bizContent, RefundCallbackResponse.class);
         } catch (Exception e) {
             logger.error("处理退款回调通知失败", e);
             throw new CmbPaymentException("REFUND_NOTIFY_PARSE_ERROR", "处理退款回调通知失败", e);
