@@ -156,7 +156,7 @@ public class CmbPaymentService {
     public NotifyResponse handleNotify(String notifyData) throws CmbPaymentException {
         try {
             Map<String, String> notifyMap = SignatureUtil.parseQueryString(notifyData);
-            return objectMapper.convertValue(notifyMap, NotifyResponse.class);
+            return objectMapper.convertValue(notifyMap.get("biz_content"), NotifyResponse.class);
         } catch (Exception e) {
             logger.error("处理回调通知失败", e);
             throw new CmbPaymentException("NOTIFY_PARSE_ERROR", "处理回调通知失败", e);
@@ -169,7 +169,7 @@ public class CmbPaymentService {
     public RefundCallbackResponse handleRefundNotify(String notifyData) throws CmbPaymentException {
         try {
             Map<String, String> notifyMap = SignatureUtil.parseQueryString(notifyData);
-            return objectMapper.convertValue(notifyMap, RefundCallbackResponse.class);
+            return objectMapper.convertValue(notifyMap.get("biz_content"), RefundCallbackResponse.class);
         } catch (Exception e) {
             logger.error("处理退款回调通知失败", e);
             throw new CmbPaymentException("REFUND_NOTIFY_PARSE_ERROR", "处理退款回调通知失败", e);
