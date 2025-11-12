@@ -83,7 +83,7 @@ public class HttpLoggingUtil {
         
         // sb.append(SEPARATOR).append(LINE_SEPARATOR);
         
-        logger.info(sb.toString());
+        logger.debug(sb.toString());
     }
     
     /**
@@ -142,7 +142,7 @@ public class HttpLoggingUtil {
         
         // sb.append(SEPARATOR).append(LINE_SEPARATOR);
         
-        logger.info(sb.toString());
+        logger.debug(sb.toString());
     }
     
     /**

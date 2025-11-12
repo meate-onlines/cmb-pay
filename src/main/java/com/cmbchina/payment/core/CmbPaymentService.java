@@ -200,7 +200,7 @@ public class CmbPaymentService {
             // 提取业务参数并序列化为JSON字符串
             Map<String, Object> bizContentMap = extractBizContent(request);
             String bizContentJson = objectMapper.writeValueAsString(bizContentMap);
-            logger.info("bizContentJson: {}", bizContentJson);
+            logger.debug("bizContentJson: {}", bizContentJson);
             request.setBizContent(bizContentJson);
             
             // 构建签名参数Map（使用小驼峰命名）
@@ -208,9 +208,9 @@ public class CmbPaymentService {
             
             // 生成签名
             String signContent = SignatureUtil.getSignContent(signMap);
-            logger.info("签名内容: {}", signContent);
+            logger.debug("签名内容: {}", signContent);
             String sign = SignatureUtil.sm2Sign(signContent, config.getPrivateKey());
-            logger.info("签名: {}", sign);
+            logger.debug("签名: {}", sign);
             request.setSign(sign);
             
             // 生成API签名
