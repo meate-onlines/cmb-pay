@@ -77,6 +77,13 @@ public class CmbPaymentService {
     }
     
     /**
+     * 支付宝Native支付
+     */
+    public AlipayNativeOrderResponse alipayNativeOrder(AlipayNativeOrderRequest request) throws CmbPaymentException {
+        return executeRequest("/polypay/v1.0/mchorders/zfbqrcode", request, AlipayNativeOrderResponse.class);
+    }
+    
+    /**
      * 退款申请
      */
     public RefundResponse refund(RefundRequest request) throws CmbPaymentException {

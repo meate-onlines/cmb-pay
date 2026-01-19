@@ -84,6 +84,17 @@ public class CmbPaymentClient {
     }
     
     /**
+     * 支付宝Native支付
+     * 
+     * @param request 支付宝Native支付请求
+     * @return 支付宝Native支付响应
+     * @throws CmbPaymentException 支付异常
+     */
+    public AlipayNativeOrderResponse alipayNativeOrder(AlipayNativeOrderRequest request) throws CmbPaymentException {
+        return paymentService.alipayNativeOrder(request);
+    }
+    
+    /**
      * 退款申请
      * 
      * @param request 退款申请请求
