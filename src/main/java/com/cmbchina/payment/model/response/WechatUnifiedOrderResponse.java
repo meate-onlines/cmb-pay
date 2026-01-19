@@ -1,6 +1,8 @@
 package com.cmbchina.payment.model.response;
 
 import com.cmbchina.payment.model.BaseResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 微信统一下单响应
@@ -11,70 +13,43 @@ import com.cmbchina.payment.model.BaseResponse;
  */
 public class WechatUnifiedOrderResponse extends BaseResponse {
     
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    
     /**
-     * 商户号
+     * 商户号（仅在returnCode为SUCCESS时返回）
      */
     private String merId;
     
     /**
-     * 商户订单号
+     * 商户订单号（仅在returnCode为SUCCESS时返回）
      */
     private String orderId;
     
     /**
-     * 平台订单号
+     * 交易类型（仅在returnCode为SUCCESS时返回）
      */
-    private String tnOrderId;
+    private String tradeType;
     
     /**
-     * 订单状态
+     * 第三方错误描述（第三方处理失败时返回）
      */
-    private String orderStat;
+    private String errDescription;
     
     /**
-     * 订单金额（分）
+     * 平台订单号，招行生成的订单号（仅在returnCode和respCode都为SUCCESS时返回）
      */
-    private String orderAmt;
+    private String cmbOrderId;
     
     /**
-     * 支付参数（用于调起支付）
+     * 订单发送时间，格式为yyyyMMddHHmmss（仅在returnCode和respCode都为SUCCESS时返回）
      */
-    private String payParams;
+    private String txnTime;
     
     /**
-     * 预支付交易会话标识
+     * 支付数据，JSON对象（仅在returnCode和respCode都为SUCCESS时返回）
+     * trade_type为JSAPI或APP时返回，拉起支付时使用
      */
-    private String prepayId;
-    
-    /**
-     * 二维码链接（APP支付时返回）
-     */
-    private String qrCode;
-    
-    /**
-     * 订单创建时间
-     */
-    private String orderDate;
-    
-    /**
-     * 订单有效期至
-     */
-    private String expireTime;
-    
-    /**
-     * 附加数据
-     */
-    private String attach;
-    
-    /**
-     * 限制支付者
-     */
-    private String limitPayer;
-    
-    /**
-     * 优惠详情
-     */
-    private String promotionDetail;
+    private Object payData;
     
     public String getMerId() {
         return merId;
@@ -92,91 +67,64 @@ public class WechatUnifiedOrderResponse extends BaseResponse {
         this.orderId = orderId;
     }
     
-    public String getTnOrderId() {
-        return tnOrderId;
+    public String getTradeType() {
+        return tradeType;
     }
     
-    public void setTnOrderId(String tnOrderId) {
-        this.tnOrderId = tnOrderId;
+    public void setTradeType(String tradeType) {
+        this.tradeType = tradeType;
     }
     
-    public String getOrderStat() {
-        return orderStat;
+    public String getErrDescription() {
+        return errDescription;
     }
     
-    public void setOrderStat(String orderStat) {
-        this.orderStat = orderStat;
+    public void setErrDescription(String errDescription) {
+        this.errDescription = errDescription;
     }
     
-    public String getOrderAmt() {
-        return orderAmt;
+    public String getCmbOrderId() {
+        return cmbOrderId;
     }
     
-    public void setOrderAmt(String orderAmt) {
-        this.orderAmt = orderAmt;
+    public void setCmbOrderId(String cmbOrderId) {
+        this.cmbOrderId = cmbOrderId;
     }
     
-    public String getPayParams() {
-        return payParams;
+    public String getTxnTime() {
+        return txnTime;
     }
     
-    public void setPayParams(String payParams) {
-        this.payParams = payParams;
+    public void setTxnTime(String txnTime) {
+        this.txnTime = txnTime;
     }
     
-    public String getPrepayId() {
-        return prepayId;
+    public Object getPayData() {
+        return payData;
     }
     
-    public void setPrepayId(String prepayId) {
-        this.prepayId = prepayId;
+    public void setPayData(Object payData) {
+        this.payData = payData;
     }
     
-    public String getQrCode() {
-        return qrCode;
-    }
-    
-    public void setQrCode(String qrCode) {
-        this.qrCode = qrCode;
-    }
-    
-    public String getOrderDate() {
-        return orderDate;
-    }
-    
-    public void setOrderDate(String orderDate) {
-        this.orderDate = orderDate;
-    }
-    
-    public String getExpireTime() {
-        return expireTime;
-    }
-    
-    public void setExpireTime(String expireTime) {
-        this.expireTime = expireTime;
-    }
-    
-    public String getAttach() {
-        return attach;
-    }
-    
-    public void setAttach(String attach) {
-        this.attach = attach;
-    }
-    
-    public String getLimitPayer() {
-        return limitPayer;
-    }
-    
-    public void setLimitPayer(String limitPayer) {
-        this.limitPayer = limitPayer;
-    }
-    
-    public String getPromotionDetail() {
-        return promotionDetail;
-    }
-    
-    public void setPromotionDetail(String promotionDetail) {
-        this.promotionDetail = promotionDetail;
+    /**
+     * 获取支付数据的 JSON 字符串格式
+     * 
+     * @return JSON 字符串，如果 payData 为 null 或转换失败则返回 null
+     */
+    public String getPayDataAsString() {
+        if (payData == null) {
+            return null;
+        }
+        
+        if (payData instanceof String) {
+            return (String) payData;
+        }
+        
+        try {
+            return objectMapper.writeValueAsString(payData);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 }

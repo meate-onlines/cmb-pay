@@ -148,20 +148,28 @@ public class PaymentExample {
         WechatUnifiedOrderRequest request = new WechatUnifiedOrderRequest();
         request.setMerId("your_merchant_id");
         request.setOrderId("WECHAT_ORDER_" + System.currentTimeMillis());
-        request.setOrderAmt("20000"); // 200.00元
-        request.setGoodsDes("微信支付测试商品");
-        request.setPayType("JSAPI"); // 公众号支付
-        request.setOpenid("user_openid_here");
+        request.setTxnAmt("20000"); // 200.00元
+        request.setBody("微信支付测试商品");
+        request.setTradeType("JSAPI"); // 公众号支付：JSAPI，APP支付：APP
+        request.setSubAppId("your_wechat_appid"); // 微信公众号或小程序的appid
+        request.setUserId("test_cashier_001"); // 收银员ID
+        request.setSpbillCreateIp("192.168.1.100"); // 用户端IP
+        request.setSubOpenId("user_openid_here"); // 用户在subAppId下的openid
         request.setNotifyUrl("https://your-domain.com/notify");
-        request.setReturnUrl("https://your-domain.com/return");
         
         try {
             WechatUnifiedOrderResponse response = client.wechatUnifiedOrder(request);
             
             if (response.isSuccess()) {
-                System.out.println("预支付ID: " + response.getPrepayId());
-                System.out.println("支付参数: " + response.getPayParams());
-                System.out.println("平台订单号: " + response.getTnOrderId());
+                System.out.println("支付数据（JSON字符串）: " + response.getPayDataAsString());
+                System.out.println("平台订单号: " + response.getCmbOrderId());
+                System.out.println("订单发送时间: " + response.getTxnTime());
+                
+                // 如果需要解析支付数据中的具体字段
+                Object payData = response.getPayData();
+                System.out.println("支付数据（对象）: " + payData);
+            } else {
+                System.out.println("下单失败: " + response.getRespMsg());
             }
         } catch (CmbPaymentException e) {
             System.err.println("微信支付异常: " + e.getMessage());

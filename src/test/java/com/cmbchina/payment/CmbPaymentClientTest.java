@@ -1,6 +1,7 @@
 package com.cmbchina.payment;
 
 import com.cmbchina.payment.config.CmbPaymentConfig;
+import com.cmbchina.payment.exception.CmbPaymentException;
 import com.cmbchina.payment.model.request.*;
 import com.cmbchina.payment.model.response.*;
 import com.cmbchina.payment.crypto.SignatureUtil;
@@ -109,15 +110,16 @@ class CmbPaymentClientTest {
     void testRefundRequest() {
         RefundRequest request = new RefundRequest();
         request.setMerId(config.getMerchantId());
-        request.setOrderId("TEST_ORDER_001");
-        request.setOrderId("TEST_REFUND_001");
+        request.setOrderId("TEST_REFUND_001"); // 退款订单号
+        request.setOrigOrderId("TEST_ORDER_001"); // 原始订单号
+        request.setUserId("test_user"); // 收银员（必填）
         request.setRefundAmt("5000");
         request.setRefundReason("测试退款原因");
         
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
-        assertEquals("TEST_ORDER_001", request.getOrderId());
         assertEquals("TEST_REFUND_001", request.getOrderId());
+        assertEquals("TEST_ORDER_001", request.getOrigOrderId());
         assertEquals("5000", request.getRefundAmt());
         assertEquals("测试退款原因", request.getRefundReason());
     }
@@ -140,14 +142,19 @@ class CmbPaymentClientTest {
         WechatUnifiedOrderRequest request = new WechatUnifiedOrderRequest();
         request.setMerId(config.getMerchantId());
         request.setOrderId("TEST_ORDER_001");
-        request.setOrderAmt("10000");
-        request.setGoodsDes("测试商品");
+        request.setTxnAmt("10000");
+        request.setBody("测试商品");
+        request.setTradeType("JSAPI");
+        request.setSubAppId("test_wechat_appid");
+        request.setUserId("test_cashier");
+        request.setSpbillCreateIp("192.168.1.1");
         request.setNotifyUrl(config.getNotifyUrl());
         
         assertNotNull(request);
         assertEquals(config.getMerchantId(), request.getMerId());
         assertEquals("TEST_ORDER_001", request.getOrderId());
-        assertEquals("10000", request.getOrderAmt());
+        assertEquals("10000", request.getTxnAmt());
+        assertEquals("测试商品", request.getBody());
     }
     
     @Test
@@ -251,12 +258,15 @@ class CmbPaymentClientTest {
     @Test
     @DisplayName("测试处理通知（正常情况）")
     void testHandleNotify() {
-        // 使用新的字段名，注意字段名是小写下划线格式
-        String notifyData = "merId=test_merchant&orderId=TEST_001&tradeState=S&txnAmt=10000&payType=ZF";
+        // 通知数据必须包含 biz_content 字段（JSON格式）
+        String bizContent = "{\"merId\":\"test_merchant\",\"orderId\":\"TEST_001\",\"cmbOrderId\":\"CMB_001\",\"txnAmt\":\"10000\",\"payType\":\"ZF\",\"txnTime\":\"20240101120000\"}";
+        String notifyData = "biz_content=" + bizContent + "&version=0.0.1&encoding=UTF-8&signMethod=02";
         
         assertDoesNotThrow(() -> {
             NotifyResponse response = client.handleNotify(notifyData);
             assertNotNull(response);
+            assertEquals("test_merchant", response.getMerId());
+            assertEquals("TEST_001", response.getOrderId());
         });
     }
     
@@ -265,10 +275,9 @@ class CmbPaymentClientTest {
     void testHandleNotifyWithInvalidData() {
         String invalidData = "invalid_format_data";
         
-        // parseQueryString 不会抛出异常，而是返回空Map，所以这里不会抛出异常
-        assertDoesNotThrow(() -> {
-            NotifyResponse response = client.handleNotify(invalidData);
-            assertNotNull(response);
+        // 缺少 biz_content 字段，应该抛出异常
+        assertThrows(CmbPaymentException.class, () -> {
+            client.handleNotify(invalidData);
         });
     }
     

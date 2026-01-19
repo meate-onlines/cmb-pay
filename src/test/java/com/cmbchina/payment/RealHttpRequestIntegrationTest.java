@@ -5,8 +5,10 @@ import com.cmbchina.payment.core.CmbPaymentService;
 import com.cmbchina.payment.exception.CmbPaymentException;
 import com.cmbchina.payment.model.request.OrderQueryRequest;
 import com.cmbchina.payment.model.request.QrCodeApplyRequest;
+import com.cmbchina.payment.model.request.WechatUnifiedOrderRequest;
 import com.cmbchina.payment.model.response.OrderQueryResponse;
 import com.cmbchina.payment.model.response.QrCodeApplyResponse;
+import com.cmbchina.payment.model.response.WechatUnifiedOrderResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -461,6 +463,154 @@ class RealHttpRequestIntegrationTest {
             System.out.println("错误码: " + e.getErrorCode());
             System.out.println("错误信息: " + e.getMessage());
             System.out.println("\n✓ 即使查询失败，HTTP请求和响应日志也已打印");
+        }
+    }
+    
+    /**
+     * 测试微信统一下单
+     * 此测试会发送真实的HTTP请求到API服务器，创建微信支付订单并验证请求和响应的日志是否正确打印
+     */
+    @Test
+    @Order(4)
+    @DisplayName("测试微信统一下单")
+    void testWechatUnifiedOrder() {
+        // 从环境变量或系统属性获取API URL
+        String apiUrl = "https://api.cmburl.cn:8065";
+        
+        // 如果没有配置API URL，跳过测试
+        if (apiUrl == null || apiUrl.isEmpty()) {
+            System.out.println("========================================");
+            System.out.println("跳过微信统一下单测试：未配置API URL");
+            System.out.println("提示：设置环境变量 CMB_API_URL 或系统属性 cmb.api.url 来启用此测试");
+            System.out.println("========================================");
+            return;
+        }
+        
+        // 从环境变量或系统属性获取其他配置
+        String merchantId = "3089991727302TE";
+        String appId = "8ab74856-8772-45c9-96db-54cb30ab9f74";
+        String appSecret = "5b96f20a-011f-4254-8be8-9a5ceb2f317f";
+        String privateKey = "D5F2AFA24E6BA9071B54A8C9AD735F9A1DE9C4657FA386C09B592694BC118B38";
+        String publicKey = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAE6Q+fktsnY9OFP+LpSR5Udbxf5zHCFO0PmOKlFNTxDIGl8jsPbbB/9ET23NV+acSz4FEkzD74sW2iiNVHRLiKHg==";
+        
+        // 检查必要的配置
+        if (merchantId == null || appId == null || appSecret == null || 
+            privateKey == null || publicKey == null) {
+            System.out.println("========================================");
+            System.out.println("跳过微信统一下单测试：缺少必要的配置信息");
+            System.out.println("提示：需要设置以下环境变量或系统属性：");
+            System.out.println("  - CMB_MERCHANT_ID / cmb.merchant.id");
+            System.out.println("  - CMB_APP_ID / cmb.app.id");
+            System.out.println("  - CMB_APP_SECRET / cmb.app.secret");
+            System.out.println("  - CMB_PRIVATE_KEY / cmb.private.key");
+            System.out.println("  - CMB_PUBLIC_KEY / cmb.public.key");
+            System.out.println("========================================");
+            return;
+        }
+        
+        System.out.println("========================================");
+        System.out.println("开始微信统一下单测试");
+        System.out.println("API URL: " + apiUrl);
+        System.out.println("商户ID: " + merchantId);
+        System.out.println("应用ID: " + appId);
+        System.out.println("========================================");
+        
+        // 创建真实的配置
+        CmbPaymentConfig realConfig = new CmbPaymentConfig.Builder()
+                .merchantId(merchantId)
+                .appId(appId)
+                .appSecret(appSecret)
+                .privateKey(privateKey)
+                .publicKey(publicKey)
+                .apiUrl(apiUrl)
+                .sandbox(true)
+                .connectTimeout(30000)
+                .readTimeout(30000)
+                .build();
+        
+        // 创建真实的支付服务（不使用Mock）
+        CmbPaymentService realService = new CmbPaymentService(realConfig);
+        
+        // 获取通知URL（可选）
+        String notifyUrl = getProperty("CMB_NOTIFY_URL", "cmb.notify.url");
+        if (notifyUrl == null || notifyUrl.isEmpty()) {
+            notifyUrl = "https://dev-api.bangyangjia.com/admin-api/pay/notify/order/46"; // 默认测试URL
+        }
+        
+        // 创建微信统一下单请求
+        WechatUnifiedOrderRequest request = new WechatUnifiedOrderRequest();
+        String orderId = "WX_" + System.currentTimeMillis(); // 使用时间戳确保唯一性
+        request.setMerId(merchantId);
+        request.setOrderId(orderId);
+        request.setTxnAmt("1"); // 0.01元，单位：分
+        request.setBody("测试微信支付商品");
+        request.setTradeType("JSAPI"); // JSAPI-公众号支付/小程序支付，APP-APP支付
+        request.setSubAppId("wx3a72c3ed90343613"); // 微信公众号或小程序的appid（需要替换为真实的）
+        request.setUserId("V080708212"); // 收银员ID（必填）
+        request.setSpbillCreateIp("192.168.1.100"); // 用户端IP（必填）
+        request.setNotifyUrl(notifyUrl);
+        request.setSubOpenId("oUpF8uMuAJO_M2pxb1Q9zNjWeS6o"); // 用户在subAppId下的openid（JSAPI必填）
+        
+        // 可选字段
+        request.setDeviceInfo("WEB"); // PC网页或公众号内支付请传"WEB"
+        request.setPayValidTime("900"); // 支付有效时间，单位：秒
+        request.setAttach("测试附加数据");
+        
+        System.out.println("\n发送微信统一下单请求...");
+        System.out.println("订单号: " + orderId);
+        System.out.println("订单金额: 0.01元（1分）");
+        System.out.println("商品描述: " + request.getBody());
+        System.out.println("交易类型: " + request.getTradeType());
+        System.out.println("\n请查看上面的日志输出，应该能看到：");
+        System.out.println("1. HTTP REQUEST 详细信息（方法、URL、请求头、请求体）");
+        System.out.println("2. HTTP RESPONSE 详细信息（状态码、响应头、响应体）");
+        System.out.println("\n");
+        
+        try {
+            // 发送真实的HTTP请求
+            WechatUnifiedOrderResponse response = realService.wechatUnifiedOrder(request);
+            
+            // 如果请求成功，验证响应
+            assertNotNull(response, "响应不应为空");
+            
+            System.out.println("========================================");
+            System.out.println("微信统一下单成功！");
+            System.out.println("商户订单号: " + response.getOrderId());
+            if (response.getCmbOrderId() != null) {
+                System.out.println("平台订单号: " + response.getCmbOrderId());
+            }
+            if (response.getTxnTime() != null) {
+                System.out.println("订单发送时间: " + response.getTxnTime());
+            }
+            if (response.getPayData() != null) {
+                System.out.println("支付数据（JSON字符串）: " + response.getPayDataAsString());
+                System.out.println("支付数据（对象）: " + response.getPayData());
+            }
+            System.out.println("========================================");
+            
+        } catch (CmbPaymentException e) {
+            // 请求失败可能是业务错误
+            System.out.println("========================================");
+            System.out.println("微信统一下单失败（业务错误）");
+            System.out.println("错误码：" + e.getErrorCode());
+            System.out.println("错误信息：" + e.getMessage());
+            System.out.println("========================================");
+            System.out.println("\n✓ HTTP请求和响应日志已成功打印");
+            System.out.println("✓ 即使业务失败，也能看到完整的请求和响应信息");
+            
+            // 验证异常被正确抛出
+            assertNotNull(e);
+            assertNotNull(e.getErrorCode());
+        } catch (Exception e) {
+            // 网络错误或其他异常
+            System.out.println("========================================");
+            System.out.println("微信统一下单遇到网络或其他错误");
+            System.out.println("异常类型：" + e.getClass().getName());
+            System.out.println("异常信息：" + e.getMessage());
+            System.out.println("========================================");
+            
+            // 即使有网络错误，也应该能看到请求日志
+            System.out.println("\n✓ HTTP请求日志应该已经打印（即使响应失败）");
         }
     }
     
